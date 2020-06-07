@@ -15,7 +15,7 @@ import {
 import { UserContext } from "../../App";
 
 const HeaderUserbox = () => {
-  const { userData } = useContext(UserContext);
+  const { userData, logout} = useContext(UserContext);
   return (
     <>
       <UncontrolledDropdown className="position-relative ml-2">
@@ -52,7 +52,9 @@ const HeaderUserbox = () => {
               </Nav>
             </ListGroupItem>
             <ListGroupItem className="rounded-bottom p-3">
-              <Button color="link">Logout</Button>
+              <Button color="link" onClick={logout}>
+                Logout
+              </Button>
             </ListGroupItem>
           </ListGroup>
         </DropdownMenu>
