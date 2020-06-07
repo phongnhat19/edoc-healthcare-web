@@ -1,26 +1,72 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { createContext, useState, useEffect } from "react";
+import AuthRoutes from "./AuthRoutes";
+import AppRoutes from "./AppRoutes";
+import "./assets/base.scss";
+
+const UserContext = createContext({
+  userData: {
+    name: "",
+    email: "",
+    avatar: "",
+    role: "",
+  },
+  token: "",
+  saveUserCredentials: (userData: User, token: string) => {},
+});
+
+const SidebarContext = createContext({
+  open: true,
+  setOpen: () => {},
+});
+
+const userDataLocalKey = "@eDoc-user";
+const tokenLocalKey = "@eDoc-token";
 
 function App() {
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    avatar: "",
+    role: "Super admin",
+  });
+  const [token, setToken] = useState("");
+  const saveUserCredentials = (userData: User, token: string) => {
+    localStorage.setItem(userDataLocalKey, JSON.stringify(userData));
+    localStorage.setItem(tokenLocalKey, token);
+    setUserData(userData);
+    setToken(token);
+    window.location.href = "/";
+  };
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const localUser = localStorage.getItem(userDataLocalKey);
+    if (localUser) {
+      setUserData(JSON.parse(localUser));
+    }
+    const localToken = localStorage.getItem(tokenLocalKey);
+    if (localToken) {
+      setToken(localToken);
+    }
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <UserContext.Provider value={{ userData, token, saveUserCredentials }}>
+      {!token ? (
+        <AuthRoutes />
+      ) : (
+        <SidebarContext.Provider
+          value={{
+            open: sidebarOpen,
+            setOpen: () => setSidebarOpen(!sidebarOpen),
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <AppRoutes />
+        </SidebarContext.Provider>
+      )}
+    </UserContext.Provider>
   );
 }
 
+export { SidebarContext, UserContext };
 export default App;
