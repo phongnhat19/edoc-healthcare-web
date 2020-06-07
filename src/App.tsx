@@ -12,6 +12,7 @@ const UserContext = createContext({
   },
   token: "",
   saveUserCredentials: (userData: User, token: string) => {},
+  logout: () => {},
 });
 
 const SidebarContext = createContext({
@@ -50,8 +51,23 @@ function App() {
       setToken(localToken);
     }
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem(userDataLocalKey);
+    localStorage.removeItem(tokenLocalKey);
+    setToken("");
+    setUserData({
+      name: "",
+      email: "",
+      avatar: "",
+      role: "",
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ userData, token, saveUserCredentials }}>
+    <UserContext.Provider
+      value={{ userData, token, saveUserCredentials, logout }}
+    >
       {!token ? (
         <AuthRoutes />
       ) : (
