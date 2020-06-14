@@ -23,11 +23,16 @@ import avatar2 from "../../assets/images/avatars/avatar2.jpg";
 import avatar6 from "../../assets/images/avatars/avatar6.jpg";
 
 import { UserContext } from "../../App";
+import { updateProfile } from "../../services/api/user";
 
 const ProfilePage = () => {
-  const { userData } = useContext(UserContext);
+  const { userData, token } = useContext(UserContext);
 
   const [name, setName] = useState(userData.name);
+
+  const handleUpdate = () => {
+    updateProfile({ name, token });
+  };
 
   return (
     <>

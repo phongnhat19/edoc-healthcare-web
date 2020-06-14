@@ -10,6 +10,7 @@
     "@fortawesome/react-fontawesome": "^0.1.9",
     "apexcharts": "^3.19.0",
     "availity-reactstrap-validation": "^2.6.1",
+    "axios": "^0.19.2",
     "chart.js": "^2.9.3",
     "clsx": "^1.1.0",
     "draft-js": "^0.11.5",

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { NavLink as NavLinkStrap } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import {
   Badge,
   ListGroup,
@@ -15,7 +16,7 @@ import {
 import { UserContext } from "../../App";
 
 const HeaderUserbox = () => {
-  const { userData, logout} = useContext(UserContext);
+  const { userData, logout } = useContext(UserContext);
   return (
     <>
       <UncontrolledDropdown className="position-relative ml-2">
@@ -36,10 +37,7 @@ const HeaderUserbox = () => {
             <span className="text-black-50">{userData.role}</span>
           </div>
           <span className="pl-1 pl-xl-3">
-            <FontAwesomeIcon
-              icon={["fas", "angle-down"]}
-              className="opacity-5"
-            />
+            <FontAwesomeIcon icon={faAngleDown} className="opacity-5" />
           </span>
         </DropdownToggle>
         <DropdownMenu right className="dropdown-menu-lg overflow-hidden p-0">

@@ -5,7 +5,7 @@ import SidebarHeader from "./SidebarHeader";
 import SidebarMenu from "./SidebarMenu";
 
 const Sidebar = () => {
-  const { open: sidebarOpen, setOpen: toggleSidebarMobile } = useContext(
+  const { open: sidebarOpen, setOpen: toggleSidebar } = useContext(
     SidebarContext
   );
 
@@ -18,7 +18,7 @@ const Sidebar = () => {
         </div>
       </div>
       <div
-        onClick={toggleSidebarMobile}
+        onClick={toggleSidebar}
         className={clsx("app-sidebar-overlay", {
           "is-active": sidebarOpen,
         })}

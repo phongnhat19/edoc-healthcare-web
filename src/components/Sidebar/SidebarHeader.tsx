@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import clsx from "clsx";
 import { SidebarContext } from "../../App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDotCircle, faArrowsAltH } from "@fortawesome/free-solid-svg-icons";
 import { UncontrolledTooltip } from "reactstrap";
 
 import { NavLink } from "react-router-dom";
@@ -40,7 +41,7 @@ const SidebarHeader = () => {
           className="btn btn-sm collapse-sidebar-btn"
           id="CollapseSidebarTooltip"
         >
-          <FontAwesomeIcon icon={["far", "dot-circle"]} size="lg" />
+          <FontAwesomeIcon icon={faDotCircle} size="lg" />
         </button>
         <UncontrolledTooltip
           target="CollapseSidebarTooltip"
@@ -65,7 +66,7 @@ const SidebarHeader = () => {
           className="expand-sidebar-btn btn btn-sm"
           id="ExpandSidebarTooltip"
         >
-          <FontAwesomeIcon icon={["fas", "arrows-alt-h"]} />
+          <FontAwesomeIcon icon={faArrowsAltH} />
         </button>
         <UncontrolledTooltip
           target="ExpandSidebarTooltip"

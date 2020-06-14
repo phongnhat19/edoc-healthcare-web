@@ -39,7 +39,7 @@ const SidebarMenu = () => {
             </li>
             <li>
               <a
-                // href="#"
+                href="#form"
                 onClick={() => setDocTypeOpen(!docTypeOpen)}
                 className={clsx({ active: docTypeOpen }, "menu-item")}
               >
@@ -68,7 +68,7 @@ const SidebarMenu = () => {
             </li>
             <li>
               <a
-                // href="#"
+                href="#doc"
                 onClick={() => setDocListOpen(!docListOpen)}
                 className={clsx({ active: docListOpen }, "menu-item")}
               >
@@ -100,6 +100,7 @@ const SidebarMenu = () => {
             </li>
             <li>
               <a
+                href="#user"
                 onClick={() => setUserOpen(!userOpen)}
                 className={clsx({ active: userOpen }, "menu-item")}
               >
@@ -133,7 +134,7 @@ const SidebarMenu = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="#history"
                 onClick={() => setHistoryOpen(!historyOpen)}
                 className={clsx({ active: historyOpen }, "menu-item")}
               >
