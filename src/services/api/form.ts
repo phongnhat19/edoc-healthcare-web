@@ -1,6 +1,11 @@
 import axios from "axios";
 import { API_ENDPOINT } from "./constant";
 
+const FORM_FIELD_TYPE = {
+  STRING: "string",
+  SINGLE_CHOICE: "singleChoice",
+};
+
 const getAllForms = ({
   page = 1,
   limit = 10,
@@ -40,4 +45,4 @@ const getAllForms = ({
     });
 };
 
-export { getAllForms };
+export { getAllForms, FORM_FIELD_TYPE };
