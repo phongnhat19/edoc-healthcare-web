@@ -8,38 +8,69 @@ import {
   CardBody,
   CardFooter,
   Button,
-  Table,
-  CustomInput,
 } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
-import Switch from "rc-switch";
+
+import FormFieldTable from "./FormFieldTable";
 
 const CreateFormPage = () => {
   const [formName, setFormName] = useState("");
 
-  const [formField, setFormFields] = useState([
+  const [formFields, setFormFields] = useState([
     {
-      fieldName: "Tên bệnh nhân",
-      fieldCode: "name",
-      fieldType: "Text",
-      fieldRequired: true,
-      fieldDefault: "Tên bệnh nhân",
+      label: "Tên bệnh nhân",
+      code: "name",
+      type: "string",
+      option: [] as string[],
+      default: "",
+      editing: false,
     },
     {
-      fieldName: "Ngày sinh",
-      fieldCode: "dob",
-      fieldType: "Date",
-      fieldRequired: true,
-      fieldDefault: "{{today}}",
+      label: "Ngày sinh",
+      code: "dob",
+      type: "string",
+      option: [] as string[],
+      default: "{{today}}",
+      editing: false,
     },
   ]);
 
-  const toggleRequire = (fieldIndex: number) => {
-    const newFormField = [...formField];
-    newFormField[fieldIndex].fieldRequired = !newFormField[fieldIndex]
-      .fieldRequired;
-    setFormFields(newFormField);
+  const updateFormField = (
+    index: number,
+    newValue: {
+      label: string;
+      code: string;
+      type: string;
+      option: string[];
+      default: string;
+      editing: boolean;
+    }
+  ) => {
+    const newFormFields = [...formFields];
+    newFormFields[index] = newValue;
+    setFormFields(newFormFields);
+  };
+
+  const addFormField = () => {
+    const newFormFields = [
+      ...[
+        {
+          label: "",
+          code: "",
+          type: "string",
+          option: [] as string[],
+          default: "",
+          editing: true,
+        },
+      ],
+      ...formFields,
+    ];
+    setFormFields(newFormFields);
+  };
+
+  const deleteFormField = (index: number) => {
+    const newFormFields = [...formFields];
+    newFormFields.splice(index, 1);
+    setFormFields(newFormFields);
   };
 
   return (
@@ -103,82 +134,12 @@ const CreateFormPage = () => {
             </Row>
             <Row className="justify-content-center mt-5">
               <Col width="12">
-                <div className="table-responsive-md">
-                  <Table className="text-nowrap mb-0">
-                    <thead className="thead-light">
-                      <tr>
-                        <th className="text-center" style={{ width: "5%" }}>
-                          <CustomInput
-                            type="checkbox"
-                            id="CustomCheckbox3"
-                            className="align-self-start"
-                            label="&nbsp;"
-                          />
-                        </th>
-                        <th>Tên field</th>
-                        <th>Loại</th>
-                        <th>Mã</th>
-                        <th className="text-center" style={{ width: "20%" }}>
-                          Bắt buộc
-                        </th>
-                        <th>Giá trị mặc định</th>
-                        <th className="text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white">
-                      {formField.map((field, fieldIndex) => {
-                        return (
-                          <tr>
-                            <td className="text-center">
-                              <CustomInput
-                                type="checkbox"
-                                id="doc-1"
-                                className="align-self-start"
-                                label="&nbsp;"
-                              />
-                            </td>
-                            <td>
-                              <b>{field.fieldName}</b>
-                            </td>
-                            <td>
-                              <div className="align-box-row">
-                                {field.fieldType}
-                              </div>
-                            </td>
-                            <td>
-                              <div className="align-box-row">
-                                {field.fieldCode}
-                              </div>
-                            </td>
-                            <td className="text-center">
-                              <Switch
-                                checked={field.fieldRequired}
-                                onMouseUp={() => toggleRequire(fieldIndex)}
-                                loadingIcon={<div></div>}
-                                className="switch-small toggle-switch-success"
-                              />
-                            </td>
-                            <td>{field.fieldDefault}</td>
-                            <td className="text-center">
-                              <div>
-                                <Button
-                                  size="sm"
-                                  color="neutral-first"
-                                  className="d-30 btn-pill p-0 btn-icon"
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faEllipsisH}
-                                    className="font-size-lg"
-                                  />
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                </div>
+                <FormFieldTable
+                  updateFormField={updateFormField}
+                  formFields={formFields}
+                  addFormField={addFormField}
+                  deleteFormField={deleteFormField}
+                />
               </Col>
             </Row>
           </CardBody>
