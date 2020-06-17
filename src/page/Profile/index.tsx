@@ -27,18 +27,13 @@ import { updateProfile } from "../../services/api/user";
 
 const ProfilePage = () => {
   const { userData, token, updateUserProfile } = useContext(UserContext);
-  const [nameUpdate, setNameUpdate] = useState(true);
-
   const [name, setName] = useState(userData.name);
 
   const handleUpdate = async () => {
-    setNameUpdate(true);
     if (name === "" || name === userData.name) {
-      setNameUpdate(false);
       return;
     };
     const userResponse = await updateProfile({ name, token });
-    setNameUpdate(false);
     updateUserProfile(userResponse);
   };
 
@@ -94,9 +89,7 @@ const ProfilePage = () => {
                   </Form>
                 </CardBody>
                 <CardFooter className="p-3 text-center">
-                  <Button size="sm" className="py-2 px-4" color="primary" 
-                          onClick={handleUpdate}
-                          disabled={nameUpdate}>
+                  <Button size="sm" className="py-2 px-4" color="primary" onClick={handleUpdate}>
                     <span className="btn-wrapper--label text-uppercase font-weight-bold">
                       Cập nhật
                     </span>
