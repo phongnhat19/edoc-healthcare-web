@@ -23,16 +23,17 @@ import avatar2 from "../../assets/images/avatars/avatar2.jpg";
 import avatar6 from "../../assets/images/avatars/avatar6.jpg";
 
 import { UserContext } from "../../App";
-// import { updateProfile } from "../../services/api/user";
+import { updateProfile } from "../../services/api/user";
 
 const ProfilePage = () => {
-  const { userData } = useContext(UserContext);
+  const { userData, token, saveUserCredentials } = useContext(UserContext);
 
   const [name, setName] = useState(userData.name);
 
-  // const handleUpdate = () => {
-  //   updateProfile({ name, token });
-  // };
+  const handleUpdate = async () => {
+    const userData = await updateProfile({ name, token });
+    saveUserCredentials(userData, token);
+  };
 
   return (
     <>
@@ -86,7 +87,7 @@ const ProfilePage = () => {
                   </Form>
                 </CardBody>
                 <CardFooter className="p-3 text-center">
-                  <Button size="sm" className="py-2 px-4" color="primary">
+                  <Button size="sm" className="py-2 px-4" color="primary" onClick={handleUpdate}>
                     <span className="btn-wrapper--label text-uppercase font-weight-bold">
                       Cập nhật
                     </span>
