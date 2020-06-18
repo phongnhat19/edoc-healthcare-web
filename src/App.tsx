@@ -12,6 +12,7 @@ const UserContext = createContext({
   },
   token: "",
   saveUserCredentials: (userData: User, token: string) => {},
+  updateUserProfile: (userDate: User) => {},
   logout: () => {},
 });
 
@@ -38,6 +39,11 @@ function App() {
     setToken(token);
     window.location.href = "/";
   };
+
+  const updateUserProfile = (userData: User) => {
+    localStorage.setItem(userDataLocalKey, JSON.stringify(userData));
+    setUserData(userData);
+  }
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -66,7 +72,7 @@ function App() {
 
   return (
     <UserContext.Provider
-      value={{ userData, token, saveUserCredentials, logout }}
+      value={{ userData, token, saveUserCredentials, updateUserProfile, logout }}
     >
       {!token ? (
         <AuthRoutes />

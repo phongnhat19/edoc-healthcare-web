@@ -97,7 +97,7 @@ const updateProfile = async ({
         name: response.data.name,
         avatar:
           "https://res.cloudinary.com/gophuot/image/upload/c_scale,w_70/v1582566632/vu9otmrwzilrqlhqzjnr.jpg",
-        role: (ROLE_MAPPER as any)[response.data.user.role],
+        role: (ROLE_MAPPER as any)[response.data.role],
       };
     });
 };
