@@ -9,8 +9,13 @@ import {
   CardFooter,
   Button,
   FormFeedback,
+  Nav,
+  NavItem,
+  NavLink as NavLinkStrap,
+  TabContent,
+  TabPane,
 } from "reactstrap";
-
+import Swal from "sweetalert2";
 import ReactQuill from "react-quill";
 
 import FormFieldTable from "./FormFieldTable";
@@ -24,6 +29,7 @@ import {
   getClientPassphrase,
   getSignedTx,
 } from "../../../utils/blockchain";
+import clsx from "clsx";
 
 const CreateFormPage = () => {
   const [formName, setFormName] = useState("");
@@ -32,8 +38,14 @@ const CreateFormPage = () => {
   const [formSymbolError, setFormSymbolError] = useState("");
   const [modelUI, setModelUI] = useState("");
 
+  const [activeTab, setActiveTab] = useState("modelUI");
+
   const [formFields, setFormFields] = useState([] as TableFormField[]);
   const { userData, token } = useContext(UserContext);
+
+  const toggle = (tab: any) => {
+    if (activeTab !== tab) setActiveTab(tab);
+  };
 
   const updateFormField = (
     index: number,
@@ -101,14 +113,32 @@ const CreateFormPage = () => {
         return resultObj;
       }),
     };
-    getFormRawTX(formDataToSubmit).then(({ rawTx, sessionKey }) => {
-      const decryptedPrivateKey = symDecrypt(
-        userData.privateEncrypted,
-        getClientPassphrase(userData._id)
-      );
-      const signedTx = getSignedTx(rawTx, decryptedPrivateKey);
-      return sendSignedFormTX({ token, sessionKey, signedTx });
-    });
+    getFormRawTX(formDataToSubmit)
+      .then(({ rawTx, sessionKey }) => {
+        const decryptedPrivateKey = symDecrypt(
+          userData.privateEncrypted,
+          getClientPassphrase(userData._id)
+        );
+        const signedTx = getSignedTx(rawTx, decryptedPrivateKey);
+        return sendSignedFormTX({ token, sessionKey, signedTx });
+      })
+      .then(() => {
+        Swal.fire({
+          title: "Thành công",
+          text: "Tạo mẫu hồ sơ thành công.",
+          type: "success",
+          confirmButtonText: "OK",
+        }).then(() => (window.location.href = "/forms/list"));
+      })
+      .catch((err) => {
+        Swal.fire({
+          title: "Oops",
+          text: "Có lỗi xảy ra. Vui lòng thử lại sau.",
+          type: "error",
+          confirmButtonText: "OK",
+        });
+        console.error(err);
+      });
   };
 
   return (
@@ -172,22 +202,50 @@ const CreateFormPage = () => {
             </Row>
             <Row className="justify-content-center mt-3">
               <Col span={12}>
-                <ReactQuill
-                  theme="snow"
-                  value={modelUI}
-                  onChange={setModelUI}
-                  placeholder="Example placeholder..."
-                />
+                <Nav tabs>
+                  <NavItem>
+                    <NavLinkStrap
+                      className={clsx({ active: activeTab === "modelUI" })}
+                      onClick={() => {
+                        toggle("modelUI");
+                      }}
+                    >
+                      Mẫu
+                    </NavLinkStrap>
+                  </NavItem>
+                  <NavItem>
+                    <NavLinkStrap
+                      className={clsx({ active: activeTab === "inputFields" })}
+                      onClick={() => {
+                        toggle("inputFields");
+                      }}
+                    >
+                      Thông tin cần thiết
+                    </NavLinkStrap>
+                  </NavItem>
+                </Nav>
               </Col>
             </Row>
-            <Row className="justify-content-center mt-5">
-              <Col width="12">
-                <FormFieldTable
-                  updateFormField={updateFormField}
-                  formFields={formFields}
-                  addFormField={addFormField}
-                  deleteFormField={deleteFormField}
-                />
+            <Row className="justify-content-center mt-3">
+              <Col span={12}>
+                <TabContent activeTab={activeTab}>
+                  <TabPane tabId="modelUI">
+                    <ReactQuill
+                      theme="snow"
+                      value={modelUI}
+                      onChange={setModelUI}
+                      placeholder="Example placeholder..."
+                    />
+                  </TabPane>
+                  <TabPane tabId="inputFields">
+                    <FormFieldTable
+                      updateFormField={updateFormField}
+                      formFields={formFields}
+                      addFormField={addFormField}
+                      deleteFormField={deleteFormField}
+                    />
+                  </TabPane>
+                </TabContent>
               </Col>
             </Row>
           </CardBody>
