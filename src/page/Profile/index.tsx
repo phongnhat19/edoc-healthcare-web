@@ -27,7 +27,6 @@ import { UserContext } from "../../App";
 import { updateProfile } from "../../services/api/user";
 
 const ProfilePage = () => {
-
   const { userData, token, updateUserProfile } = useContext(UserContext);
   const [name, setName] = useState(userData.name);
   const [profileUpdating, setProfileUpdating] = useState(false);
