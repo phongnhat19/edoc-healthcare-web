@@ -105,7 +105,7 @@ const NewDocForm = () => {
                     name="docModelId"
                     onChange={e => setDocModelId(e.target.value)}
                   >
-                    {docModel.map(doc => (<option value={doc._id}>{doc.name}</option>))}
+                    {docModel.map(doc => (<option key={doc._id} value={doc._id}>{doc.name}</option>))}
                   </Input>
                 </Col>
               </Row>
