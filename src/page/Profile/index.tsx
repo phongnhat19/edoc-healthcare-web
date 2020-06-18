@@ -11,6 +11,7 @@ import {
   Input,
   CardBody,
   CardFooter,
+  UncontrolledAlert,
 } from "reactstrap";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -23,16 +24,38 @@ import avatar2 from "../../assets/images/avatars/avatar2.jpg";
 import avatar6 from "../../assets/images/avatars/avatar6.jpg";
 
 import { UserContext } from "../../App";
-// import { updateProfile } from "../../services/api/user";
+import { updateProfile } from "../../services/api/user";
 
 const ProfilePage = () => {
-  const { userData } = useContext(UserContext);
-
+  const { userData, token, updateUserProfile } = useContext(UserContext);
   const [name, setName] = useState(userData.name);
+  const [profileUpdating, setProfileUpdating] = useState(false);
+  const [message, setMessage] = useState('');
+  const [color, setColor] = useState('');
 
-  // const handleUpdate = () => {
-  //   updateProfile({ name, token });
-  // };
+  const handleUpdate = async () => {
+    if (name === "" || name === userData.name) {
+      setColor('danger');
+      setMessage('Tên không hợp lệ');
+      return;
+    };
+
+    setProfileUpdating(true);
+    try {
+      const userResponse = await updateProfile({ name, token });
+      setColor('success');
+      setMessage('Cập nhật thành công');
+      updateUserProfile(userResponse);
+    } catch (error) {
+      if (error.response) {
+        setColor('danger');
+        setMessage('Có lỗi xảy ra, xin thử lại');
+      } else {
+        console.log(error);
+      }
+    }
+    setProfileUpdating(false);
+  };
 
   return (
     <>
@@ -84,12 +107,28 @@ const ProfilePage = () => {
                       />
                     </FormGroup>
                   </Form>
+                  
+                  {/* notification after update request sent */}
+                  <UncontrolledAlert 
+                    className="mb-0" color={color} 
+                    isOpen={!profileUpdating && message} 
+                    toggle={() => {setMessage('')}}
+                  >
+                    {message}
+                  </UncontrolledAlert>
+
                 </CardBody>
                 <CardFooter className="p-3 text-center">
-                  <Button size="sm" className="py-2 px-4" color="primary">
-                    <span className="btn-wrapper--label text-uppercase font-weight-bold">
-                      Cập nhật
-                    </span>
+                  <Button 
+                    size="sm" className="font-weight-bold w-25 py-2 px-4" color="primary" 
+                    disabled={profileUpdating}
+                    onClick={handleUpdate}
+                  >
+                    { profileUpdating ? (
+                      <span className="btn-wrapper--icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>  
+                    ) : (
+                      <span className="btn-wrapper--label text-uppercase">Cập nhật</span>
+                    )}
                   </Button>
                 </CardFooter>
               </Card>
