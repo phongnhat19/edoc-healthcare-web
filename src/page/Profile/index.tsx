@@ -30,18 +30,31 @@ const ProfilePage = () => {
   const { userData, token, updateUserProfile } = useContext(UserContext);
   const [name, setName] = useState(userData.name);
   const [profileUpdating, setProfileUpdating] = useState(false);
-  const [profileUpdated, setProfileUpdated] = useState(false);
+  const [message, setMessage] = useState('');
+  const [color, setColor] = useState('');
 
   const handleUpdate = async () => {
     if (name === "" || name === userData.name) {
+      setColor('danger');
+      setMessage('Tên không hợp lệ');
       return;
     };
 
     setProfileUpdating(true);
-    const userResponse = await updateProfile({ name, token });
-    updateUserProfile(userResponse);
+    try {
+      const userResponse = await updateProfile({ name, token });
+      setColor('success');
+      setMessage('Cập nhật thành công');
+      updateUserProfile(userResponse);
+    } catch (error) {
+      if (error.response) {
+        setColor('danger');
+        setMessage('Có lỗi xảy ra, xin thử lại');
+      } else {
+        console.log(error);
+      }
+    }
     setProfileUpdating(false);
-    setProfileUpdated(true);
   };
 
   return (
@@ -94,12 +107,14 @@ const ProfilePage = () => {
                       />
                     </FormGroup>
                   </Form>
+                  
+                  {/* notification after update request sent */}
                   <UncontrolledAlert 
-                    className="mb-0" color="success" 
-                    isOpen={profileUpdated} 
-                    toggle={() => setProfileUpdated(false)}
+                    className="mb-0" color={color} 
+                    isOpen={!profileUpdating && message} 
+                    toggle={() => {setMessage('')}}
                   >
-                    Cập nhật thành công
+                    {message}
                   </UncontrolledAlert>
 
                 </CardBody>
