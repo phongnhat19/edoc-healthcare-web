@@ -94,11 +94,14 @@ const ProfilePage = () => {
                       />
                     </FormGroup>
                   </Form>
-                  {/* {profileUpdated &&  */}
-                    <UncontrolledAlert isOpen={profileUpdated} toggle={ () => setProfileUpdated(false)} className="mb-0" color="success" >
-                      Cập nhật thành công
-                    </UncontrolledAlert>
-                  {/* } */}
+                  <UncontrolledAlert 
+                    className="mb-0" color="success" 
+                    isOpen={profileUpdated} 
+                    toggle={() => setProfileUpdated(false)}
+                  >
+                    Cập nhật thành công
+                  </UncontrolledAlert>
+
                 </CardBody>
                 <CardFooter className="p-3 text-center">
                   <Button 
