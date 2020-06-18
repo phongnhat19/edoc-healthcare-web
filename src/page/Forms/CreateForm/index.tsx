@@ -37,6 +37,7 @@ const CreateFormPage = () => {
   const [formSymbol, setFormSymbol] = useState("");
   const [formSymbolError, setFormSymbolError] = useState("");
   const [modelUI, setModelUI] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState("modelUI");
 
@@ -97,6 +98,7 @@ const CreateFormPage = () => {
       isValid = false;
     }
     if (!isValid) return;
+    setLoading(true);
     const formDataToSubmit = {
       token,
       name: formName,
@@ -123,6 +125,7 @@ const CreateFormPage = () => {
         return sendSignedFormTX({ token, sessionKey, signedTx });
       })
       .then(() => {
+        setLoading(false);
         Swal.fire({
           title: "Thành công",
           text: "Tạo mẫu hồ sơ thành công.",
@@ -131,6 +134,7 @@ const CreateFormPage = () => {
         }).then(() => (window.location.href = "/forms/list"));
       })
       .catch((err) => {
+        setLoading(false);
         Swal.fire({
           title: "Oops",
           text: "Có lỗi xảy ra. Vui lòng thử lại sau.",
@@ -256,10 +260,19 @@ const CreateFormPage = () => {
               className="py-2 px-4"
               color="primary"
               onClick={handleSubmitForm}
+              disabled={loading}
             >
-              <span className="btn-wrapper--label text-uppercase font-weight-bold">
-                Tạo
-              </span>
+              {loading ? (
+                <span
+                  className="btn-wrapper--icon spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              ) : (
+                <span className="btn-wrapper--label text-uppercase font-weight-bold">
+                  Tạo
+                </span>
+              )}
             </Button>
           </CardFooter>
         </Card>
