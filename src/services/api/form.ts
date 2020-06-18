@@ -45,4 +45,68 @@ const getAllForms = ({
     });
 };
 
-export { getAllForms, FORM_FIELD_TYPE };
+const getFormRawTX = ({
+  token,
+  modelUI,
+  name,
+  symbol,
+  inputFields,
+}: {
+  token: string;
+  modelUI: string;
+  name: string;
+  symbol: string;
+  inputFields: FormField[];
+}) => {
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/get-raw-tx`,
+      {
+        name,
+        symbol,
+        modelUI,
+        inputFields,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => {
+      return {
+        sessionKey: response.data.sessionKey,
+        rawTx: response.data.rawTx,
+      };
+    });
+};
+
+const sendSignedFormTX = ({
+  token,
+  sessionKey,
+  signedTx,
+}: {
+  token: string;
+  sessionKey: string;
+  signedTx: string;
+}) => {
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/send-signed-tx`,
+      {
+        sessionKey,
+        signedTx,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => {
+      console.log(response.data);
+      return response;
+    });
+};
+
+export { getAllForms, FORM_FIELD_TYPE, getFormRawTX, sendSignedFormTX };

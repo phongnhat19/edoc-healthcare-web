@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Row,
   Input,
@@ -8,31 +8,32 @@ import {
   CardBody,
   CardFooter,
   Button,
+  FormFeedback,
 } from "reactstrap";
 
+import ReactQuill from "react-quill";
+
 import FormFieldTable from "./FormFieldTable";
+import { getFormattedDate } from "../../../utils/date";
+import { UserContext } from "../../../App";
+
+import "./style.css";
+import { getFormRawTX, sendSignedFormTX } from "../../../services/api/form";
+import {
+  symDecrypt,
+  getClientPassphrase,
+  getSignedTx,
+} from "../../../utils/blockchain";
 
 const CreateFormPage = () => {
   const [formName, setFormName] = useState("");
+  const [formNameError, setFormNameError] = useState("");
+  const [formSymbol, setFormSymbol] = useState("");
+  const [formSymbolError, setFormSymbolError] = useState("");
+  const [modelUI, setModelUI] = useState("");
 
-  const [formFields, setFormFields] = useState([
-    {
-      label: "Tên bệnh nhân",
-      code: "name",
-      type: "string",
-      option: [] as string[],
-      default: "",
-      editing: false,
-    },
-    {
-      label: "Ngày sinh",
-      code: "dob",
-      type: "string",
-      option: [] as string[],
-      default: "{{today}}",
-      editing: false,
-    },
-  ]);
+  const [formFields, setFormFields] = useState([] as TableFormField[]);
+  const { userData, token } = useContext(UserContext);
 
   const updateFormField = (
     index: number,
@@ -73,6 +74,43 @@ const CreateFormPage = () => {
     setFormFields(newFormFields);
   };
 
+  const handleSubmitForm = () => {
+    let isValid = true;
+    if (!formName) {
+      setFormNameError("Tên mẫu không được để trống");
+      isValid = false;
+    }
+    if (!formSymbol) {
+      setFormSymbolError("Ký hiệu không được để trống");
+      isValid = false;
+    }
+    if (!isValid) return;
+    const formDataToSubmit = {
+      token,
+      name: formName,
+      symbol: formSymbol,
+      modelUI,
+      inputFields: formFields.map((field) => {
+        const resultObj = {
+          name: field.code,
+          type: field.type as FormFieldType,
+          options: field.option,
+        };
+        if ((field.type as FormFieldType) === "string")
+          delete resultObj.options;
+        return resultObj;
+      }),
+    };
+    getFormRawTX(formDataToSubmit).then(({ rawTx, sessionKey }) => {
+      const decryptedPrivateKey = symDecrypt(
+        userData.privateEncrypted,
+        getClientPassphrase(userData._id)
+      );
+      const signedTx = getSignedTx(rawTx, decryptedPrivateKey);
+      return sendSignedFormTX({ token, sessionKey, signedTx });
+    });
+  };
+
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
@@ -91,8 +129,7 @@ const CreateFormPage = () => {
               <Col xs="12" lg="2">
                 <Input
                   type="text"
-                  name="createdDate"
-                  value={"01/06/2020"}
+                  value={getFormattedDate(new Date())}
                   disabled
                 />
               </Col>
@@ -100,12 +137,7 @@ const CreateFormPage = () => {
                 Người tạo
               </Col>
               <Col xs="12" lg="2">
-                <Input
-                  type="text"
-                  name="createdDate"
-                  value={"Admin"}
-                  disabled
-                />
+                <Input type="text" value={userData.name} disabled />
               </Col>
             </Row>
             <Row className="justify-content-center mt-3">
@@ -117,19 +149,35 @@ const CreateFormPage = () => {
                   type="text"
                   name="formName"
                   value={formName}
+                  invalid={formNameError !== ""}
                   onChange={(e) => setFormName(e.target.value)}
                 />
+                <FormFeedback>{formNameError}</FormFeedback>
               </Col>
             </Row>
             <Row className="justify-content-center mt-3">
               <Col xs="12" lg="2" className="d-flex align-items-center">
-                Loại mẫu
+                Ký hiệu
               </Col>
               <Col xs="12" lg="6">
-                <Input type="select" name="select" id="exampleSelect">
-                  <option>Y tế</option>
-                  <option>Xét nghiệm</option>
-                </Input>
+                <Input
+                  type="text"
+                  name="formSymbol"
+                  value={formSymbol}
+                  invalid={formSymbolError !== ""}
+                  onChange={(e) => setFormSymbol(e.target.value)}
+                />
+                <FormFeedback>{formSymbolError}</FormFeedback>
+              </Col>
+            </Row>
+            <Row className="justify-content-center mt-3">
+              <Col span={12}>
+                <ReactQuill
+                  theme="snow"
+                  value={modelUI}
+                  onChange={setModelUI}
+                  placeholder="Example placeholder..."
+                />
               </Col>
             </Row>
             <Row className="justify-content-center mt-5">
@@ -145,7 +193,12 @@ const CreateFormPage = () => {
           </CardBody>
           <div className="divider" />
           <CardFooter className="d-flex justify-content-end">
-            <Button size="sm" className="py-2 px-4" color="primary">
+            <Button
+              size="sm"
+              className="py-2 px-4"
+              color="primary"
+              onClick={handleSubmitForm}
+            >
               <span className="btn-wrapper--label text-uppercase font-weight-bold">
                 Tạo
               </span>
