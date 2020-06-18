@@ -11,6 +11,7 @@ import {
   Input,
   CardBody,
   CardFooter,
+  UncontrolledAlert,
 } from "reactstrap";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -28,13 +29,19 @@ import { updateProfile } from "../../services/api/user";
 const ProfilePage = () => {
   const { userData, token, updateUserProfile } = useContext(UserContext);
   const [name, setName] = useState(userData.name);
+  const [profileUpdating, setProfileUpdating] = useState(false);
+  const [profileUpdated, setProfileUpdated] = useState(false);
 
   const handleUpdate = async () => {
     if (name === "" || name === userData.name) {
       return;
     };
+
+    setProfileUpdating(true);
     const userResponse = await updateProfile({ name, token });
     updateUserProfile(userResponse);
+    setProfileUpdating(false);
+    setProfileUpdated(true);
   };
 
   return (
@@ -87,12 +94,23 @@ const ProfilePage = () => {
                       />
                     </FormGroup>
                   </Form>
+                  {/* {profileUpdated &&  */}
+                    <UncontrolledAlert isOpen={profileUpdated} toggle={ () => setProfileUpdated(false)} className="mb-0" color="success" >
+                      Cập nhật thành công
+                    </UncontrolledAlert>
+                  {/* } */}
                 </CardBody>
                 <CardFooter className="p-3 text-center">
-                  <Button size="sm" className="py-2 px-4" color="primary" onClick={handleUpdate}>
-                    <span className="btn-wrapper--label text-uppercase font-weight-bold">
-                      Cập nhật
-                    </span>
+                  <Button 
+                    size="sm" className="font-weight-bold w-25 py-2 px-4" color="primary" 
+                    disabled={profileUpdating}
+                    onClick={handleUpdate}
+                  >
+                    { profileUpdating ? (
+                      <span className="btn-wrapper--icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>  
+                    ) : (
+                      <span className="btn-wrapper--label text-uppercase">Cập nhật</span>
+                    )}
                   </Button>
                 </CardFooter>
               </Card>
