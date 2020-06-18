@@ -5,10 +5,14 @@ import "./assets/base.scss";
 
 const UserContext = createContext({
   userData: {
+    _id: "",
     name: "",
     email: "",
     avatar: "",
     role: "",
+    bcAddress: "",
+    seedEncrypted: "",
+    privateEncrypted: "",
   },
   token: "",
   saveUserCredentials: (userData: User, token: string) => {},
@@ -26,10 +30,14 @@ const tokenLocalKey = "@eDoc-token";
 
 function App() {
   const [userData, setUserData] = useState({
+    _id: "",
     name: "",
     email: "",
     avatar: "",
     role: "Super admin",
+    privateEncrypted: "",
+    seedEncrypted: "",
+    bcAddress: "",
   });
   const [token, setToken] = useState("");
   const saveUserCredentials = (userData: User, token: string) => {
@@ -63,10 +71,14 @@ function App() {
     localStorage.removeItem(tokenLocalKey);
     setToken("");
     setUserData({
+      _id: "",
       name: "",
       email: "",
       avatar: "",
       role: "",
+      bcAddress: "",
+      seedEncrypted: "",
+      privateEncrypted: "",
     });
   };
 

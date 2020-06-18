@@ -71,7 +71,7 @@ const FormFieldTable = ({
           </tr>
           {currentFormFields.map((field, fieldIndex) => {
             return (
-              <tr>
+              <tr key={`field-${fieldIndex}`}>
                 <td>
                   {field.editing ? (
                     <Input
