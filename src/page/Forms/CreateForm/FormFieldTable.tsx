@@ -64,6 +64,7 @@ const FormFieldTable = ({
     if (field.type === "string") return null;
     return (
       <ReactTags
+        placeholder="Thêm lựa chọn (bấm Enter để thêm)"
         inputFieldPosition="top"
         tags={field.option.map((field) => {
           return { id: field, text: field };
