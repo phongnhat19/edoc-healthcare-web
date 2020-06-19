@@ -32,6 +32,16 @@ const LoginForm = () => {
     setLoggingIn(true);
     try {
       const loginResponse = await login({ email, password });
+      if (
+        !localStorage.getItem(`@eDoc-phrase-${loginResponse.userData._id}`) ||
+        localStorage.getItem(`@eDoc-phrase-${loginResponse.userData._id}`) ===
+          ""
+      ) {
+        localStorage.setItem(
+          `@eDoc-phrase-${loginResponse.userData._id}`,
+          password
+        );
+      }
       saveUserCredentials(loginResponse.userData, loginResponse.token);
     } catch (error) {
       setLoggingIn(false);

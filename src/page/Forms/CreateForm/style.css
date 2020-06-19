@@ -1,0 +1,14 @@
+.text-editor-toolbar {
+  border-radius: 0 !important;
+  border-width: 0 !important;
+  border-bottom: 1px solid #d1d2db !important;
+}
+
+.text-editor-wrapper {
+  border: 1px solid #d1d2db;
+}
+
+.text-editor-editor {
+  padding-left: 10px;
+  padding-right: 10px;
+}

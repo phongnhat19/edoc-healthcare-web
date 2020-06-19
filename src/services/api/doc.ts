@@ -41,4 +41,14 @@ const getAllDocs = ({
     });
 };
 
-export { getAllDocs };
+const getAlDocTypes = ({ token = "" }: { token: string }) => {
+  return axios
+    .get(`${API_ENDPOINT}/docs/types`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => response.data);
+};
+
+export { getAllDocs, getAlDocTypes };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisH,
   faAngleDoubleLeft,
   faChevronLeft,
   faAngleDoubleRight,
@@ -9,7 +8,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Table,
-  CustomInput,
   Pagination,
   PaginationItem,
   PaginationLink,
@@ -20,6 +18,7 @@ import { ClipLoader } from "react-spinners";
 import { getAllForms } from "../../../services/api/form";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
+import { Link } from "react-router-dom";
 
 const FORM_LIMIT = 10;
 
@@ -45,7 +44,7 @@ const FormListPage = () => {
     const pagingComponents = [];
     for (let index = 1; index <= totalPage; index++) {
       pagingComponents.push(
-        <PaginationItem active={page === index}>
+        <PaginationItem active={page === index} key={`page-${index}`}>
           <PaginationLink href="#/" onClick={() => setPage(index)}>
             {index}
           </PaginationLink>
@@ -62,7 +61,14 @@ const FormListPage = () => {
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
-        <h4>Danh sách mẫu ({renderTotalForm()})</h4>
+        <div className="d-flex align-items-center justify-content-between">
+          <h4>Danh sách mẫu ({renderTotalForm()})</h4>
+          <Link to="/forms/create">
+            <Button color="primary" size="sm">
+              Thêm mẫu
+            </Button>
+          </Link>
+        </div>
         <div className="table-responsive-md d-flex justify-content-center mt-3">
           {loading ? (
             <ClipLoader />
@@ -70,14 +76,6 @@ const FormListPage = () => {
             <Table className="text-nowrap mb-0">
               <thead className="thead-light">
                 <tr>
-                  <th className="text-center" style={{ width: "5%" }}>
-                    <CustomInput
-                      type="checkbox"
-                      id="CustomCheckbox3"
-                      className="align-self-start"
-                      label="&nbsp;"
-                    />
-                  </th>
                   <th>Tên mẫu</th>
                   <th>Ngày tạo</th>
                   <th>Người tạo</th>
@@ -88,14 +86,6 @@ const FormListPage = () => {
                 {formList.map((formData: Form, formIndex: number) => {
                   return (
                     <tr key={`form-${formIndex}`}>
-                      <td className="text-center">
-                        <CustomInput
-                          type="checkbox"
-                          id={`form-${formIndex}`}
-                          className="align-self-start"
-                          label="&nbsp;"
-                        />
-                      </td>
                       <td>
                         <b>{formData.name}</b>
                         {/* <span className="text-black-50 d-block">Y tế</span> */}
@@ -115,19 +105,10 @@ const FormListPage = () => {
                           {formData.organizationName}
                         </a>
                       </td>
-                      <td className="text-center">
-                        <div>
-                          <Button
-                            size="sm"
-                            color="neutral-first"
-                            className="d-30 btn-pill p-0 btn-icon"
-                          >
-                            <FontAwesomeIcon
-                              icon={faEllipsisH}
-                              className="font-size-lg"
-                            />
-                          </Button>
-                        </div>
+                      <td className="text-center p-3">
+                        <Button size="sm" color="info">
+                          Phân quyền
+                        </Button>
                       </td>
                     </tr>
                   );
