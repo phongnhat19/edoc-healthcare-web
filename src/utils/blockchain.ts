@@ -13,7 +13,11 @@ import CryptoJS from "crypto-js";
 // const { address, publicKey, privateKey, mnemonic } = node;
 
 const getClientPassphrase = (userID: string) => {
-  return localStorage.getItem(`@eDoc-phrase-${userID}`) || "";
+  // FOR DEVELOPMENT
+  return "my_password_hash";
+
+  // FOR PRODUCTION
+  // return localStorage.getItem(`@eDoc-phrase-${userID}`) || "";
 };
 
 ///// sign transaction ////////
