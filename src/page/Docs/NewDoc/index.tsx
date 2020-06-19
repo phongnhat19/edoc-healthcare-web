@@ -55,6 +55,7 @@ const NewDocForm = () => {
         value: fieldValue,
       });
     }
+    console.log(newInputData);
     setInputData(newInputData);
   };
 
@@ -220,6 +221,9 @@ const NewDocForm = () => {
                               <Input
                                 type="select"
                                 value={getInputData(form.name)}
+                                onChange={(e) =>
+                                  updateInputData(form.name, e.target.value)
+                                }
                               >
                                 {form.options?.map(
                                   (optionValue, optionIndex) => {
