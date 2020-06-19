@@ -55,7 +55,6 @@ const NewDocForm = () => {
         value: fieldValue,
       });
     }
-    console.log(newInputData);
     setInputData(newInputData);
   };
 
