@@ -152,6 +152,7 @@ const NewDocForm = () => {
                     value={formId}
                     onChange={(e) => setFormId(e.target.value)}
                   >
+                    <option value={""}>Chọn mẫu hồ sơ</option>
                     {formList.map((doc) => (
                       <option key={doc._id} value={doc._id}>
                         {doc.name}
@@ -206,7 +207,7 @@ const NewDocForm = () => {
                     <tbody>
                       {getSelectedFormInputFields().map((form) => (
                         <tr>
-                          <td>{form.name}</td>
+                          <td>{form.label}</td>
                           <td>
                             {form.type === "string" ? (
                               <Input
