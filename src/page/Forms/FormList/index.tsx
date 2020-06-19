@@ -95,7 +95,9 @@ const FormListPage = () => {
                   return (
                     <tr key={`form-${formIndex}`}>
                       <td>
-                        <b>{formData.name}</b>
+                        <Link to={`/forms/detail/${formData._id}`}>
+                          <b>{formData.name}</b>
+                        </Link>
                         {/* <span className="text-black-50 d-block">Y tế</span> */}
                       </td>
                       <td>
