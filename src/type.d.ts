@@ -4,6 +4,9 @@ interface User {
   email: string;
   name: string;
   avatar: string;
+  seedEncrypted: string;
+  privateEncrypted: string;
+  bcAddress: string;
   organizationName?: string;
   organizationID?: string;
   role: string;
@@ -13,20 +16,37 @@ interface User {
 type FormFieldType = "string" | "singleChoice";
 
 interface FormField {
-  _id: string;
+  label: string;
   name: string;
   type: FormFieldType;
-  options?: [string];
+  options?: string[];
+}
+
+interface TableFormField {
+  label: string;
+  code: string;
+  type: string;
+  option: string[];
+  default: string;
+  editing: boolean;
+}
+
+interface Organization {
+  _id: string;
+  name: string;
 }
 
 interface Form {
   _id: string;
   name: string;
+  symbol: string;
+  blockchainId: string;
+  address: string;
   dateCreated: Date;
-  organizationName: string;
-  organizationID: string;
+  organization: Organization;
   modelUI: string;
-  inputFields: [FormField];
+  inputFields: FormField[];
+  grantedFor: string[];
 }
 
 // Doc type definition

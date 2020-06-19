@@ -63,6 +63,9 @@ const login = async ({
           _id: response.data.user._id,
           email: response.data.user.email,
           name: response.data.user.name,
+          privateEncrypted: response.data.user.privateEncrypted,
+          seedEncrypted: response.data.user.seedEncrypted,
+          bcAddress: response.data.user.bcAddress,
           avatar:
             "https://res.cloudinary.com/gophuot/image/upload/c_scale,w_70/v1582566632/vu9otmrwzilrqlhqzjnr.jpg",
           role: (ROLE_MAPPER as any)[response.data.user.role],
@@ -95,6 +98,9 @@ const updateProfile = async ({
         _id: response.data._id,
         email: response.data.email,
         name: response.data.name,
+        privateEncrypted: response.data.user.privateEncrypted,
+        seedEncrypted: response.data.user.seedEncrypted,
+        bcAddress: response.data.user.bcAddress,
         avatar:
           "https://res.cloudinary.com/gophuot/image/upload/c_scale,w_70/v1582566632/vu9otmrwzilrqlhqzjnr.jpg",
         role: (ROLE_MAPPER as any)[response.data.user.role],

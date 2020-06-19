@@ -2,21 +2,27 @@ import React, { createContext, useState, useEffect } from "react";
 import AuthRoutes from "./AuthRoutes";
 import AppRoutes from "./AppRoutes";
 import "./assets/base.scss";
+import "./App.css";
 
 const UserContext = createContext({
   userData: {
+    _id: "",
     name: "",
     email: "",
     avatar: "",
     role: "",
+    bcAddress: "",
+    seedEncrypted: "",
+    privateEncrypted: "",
   },
   token: "",
   saveUserCredentials: (userData: User, token: string) => {},
+  updateUserProfile: (userDate: User) => {},
   logout: () => {},
 });
 
 const SidebarContext = createContext({
-  open: true,
+  open: false,
   setOpen: () => {},
 });
 
@@ -25,10 +31,14 @@ const tokenLocalKey = "@eDoc-token";
 
 function App() {
   const [userData, setUserData] = useState({
+    _id: "",
     name: "",
     email: "",
     avatar: "",
     role: "Super admin",
+    privateEncrypted: "",
+    seedEncrypted: "",
+    bcAddress: "",
   });
   const [token, setToken] = useState("");
   const saveUserCredentials = (userData: User, token: string) => {
@@ -39,7 +49,12 @@ function App() {
     window.location.href = "/";
   };
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const updateUserProfile = (userData: User) => {
+    localStorage.setItem(userDataLocalKey, JSON.stringify(userData));
+    setUserData(userData);
+  };
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const localUser = localStorage.getItem(userDataLocalKey);
@@ -57,16 +72,26 @@ function App() {
     localStorage.removeItem(tokenLocalKey);
     setToken("");
     setUserData({
+      _id: "",
       name: "",
       email: "",
       avatar: "",
       role: "",
+      bcAddress: "",
+      seedEncrypted: "",
+      privateEncrypted: "",
     });
   };
 
   return (
     <UserContext.Provider
-      value={{ userData, token, saveUserCredentials, logout }}
+      value={{
+        userData,
+        token,
+        saveUserCredentials,
+        updateUserProfile,
+        logout,
+      }}
     >
       {!token ? (
         <AuthRoutes />

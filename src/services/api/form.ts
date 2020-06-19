@@ -35,8 +35,7 @@ const getAllForms = ({
           _id: formObj._id,
           name: formObj.name,
           dateCreated: new Date(formObj.createdAt),
-          organizationID: formObj.organization._id,
-          organizationName: formObj.organization.name,
+          organization: formObj.organization,
           modelUI: formObj.modelUI,
           inputFields: formObj.inputFields,
         } as Form;
@@ -45,4 +44,145 @@ const getAllForms = ({
     });
 };
 
-export { getAllForms, FORM_FIELD_TYPE };
+const getFormDetail = ({
+  formID,
+  token,
+}: {
+  formID: string;
+  token: string;
+}) => {
+  return axios
+    .get(`${API_ENDPOINT}/docmodels/by-id`, {
+      params: { id: formID },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => response.data as Form);
+};
+
+const grantFormAccess = ({
+  formBlockchainID,
+  userIDs,
+  token,
+}: {
+  formBlockchainID: string;
+  userIDs: string[];
+  token: string;
+}) => {
+  if (userIDs.length === 0) return Promise.resolve(true);
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/grant`,
+      {
+        docModelId: formBlockchainID,
+        users: userIDs,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(() => true);
+};
+
+const revokeFormAccess = ({
+  formBlockchainID,
+  userIDs,
+  token,
+}: {
+  formBlockchainID: string;
+  userIDs: string[];
+  token: string;
+}) => {
+  if (userIDs.length === 0) return Promise.resolve(true);
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/revoke`,
+      {
+        docModelId: formBlockchainID,
+        users: userIDs,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(() => true);
+};
+
+const getFormRawTX = ({
+  token,
+  modelUI,
+  name,
+  symbol,
+  inputFields,
+}: {
+  token: string;
+  modelUI: string;
+  name: string;
+  symbol: string;
+  inputFields: FormField[];
+}) => {
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/get-raw-tx`,
+      {
+        name,
+        symbol,
+        modelUI,
+        inputFields,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => {
+      return {
+        sessionKey: response.data.sessionKey,
+        rawTx: response.data.rawTx,
+      };
+    });
+};
+
+const sendSignedFormTX = ({
+  token,
+  sessionKey,
+  signedTx,
+}: {
+  token: string;
+  sessionKey: string;
+  signedTx: string;
+}) => {
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/send-signed-tx`,
+      {
+        sessionKey,
+        signedTx,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((response) => {
+      console.log(response.data);
+      return response;
+    });
+};
+
+export {
+  getAllForms,
+  FORM_FIELD_TYPE,
+  getFormRawTX,
+  sendSignedFormTX,
+  getFormDetail,
+  grantFormAccess,
+  revokeFormAccess,
+};

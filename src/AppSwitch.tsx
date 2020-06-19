@@ -6,6 +6,8 @@ import FormListPage from "./page/Forms/FormList";
 import CreateFormPage from "./page/Forms/CreateForm";
 import DocListPage from "./page/Docs/DocList";
 import UserListPage from "./page/Users/UserList";
+import NewDocForm from "./page/Docs/NewDocForm";
+import NewUserPage from "./page/Users/NewUser";
 
 function AppSwitch() {
   return (
@@ -13,7 +15,9 @@ function AppSwitch() {
       <Route path="/forms/list" component={FormListPage} />
       <Route path="/forms/create" component={CreateFormPage} />
       <Route path="/documents/list" component={DocListPage} />
+      <Route path="/documents/create" component={NewDocForm} />
       <Route path="/users/list" component={UserListPage} />
+      <Route path="/users/create" component={NewUserPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/" component={DashboardPage} />
     </Switch>
