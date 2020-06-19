@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_ENDPOINT } from "./constant";
 
-const ROLE_MAPPER = {
+export const ROLE_MAPPER = {
   "0": "admin",
   "1": "organization",
   "2": "staff",
