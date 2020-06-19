@@ -35,14 +35,82 @@ const getAllForms = ({
           _id: formObj._id,
           name: formObj.name,
           dateCreated: new Date(formObj.createdAt),
-          organizationID: formObj.organization._id,
-          organizationName: formObj.organization.name,
+          organization: formObj.organization,
           modelUI: formObj.modelUI,
           inputFields: formObj.inputFields,
         } as Form;
       });
       return responseData;
     });
+};
+
+const getFormDetail = ({
+  formID,
+  token,
+}: {
+  formID: string;
+  token: string;
+}) => {
+  return axios
+    .get(`${API_ENDPOINT}/docmodels/by-id`, {
+      params: { id: formID },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => response.data as Form);
+};
+
+const grantFormAccess = ({
+  formBlockchainID,
+  userIDs,
+  token,
+}: {
+  formBlockchainID: string;
+  userIDs: string[];
+  token: string;
+}) => {
+  if (userIDs.length === 0) return Promise.resolve(true);
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/grant`,
+      {
+        docModelId: formBlockchainID,
+        users: userIDs,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(() => true);
+};
+
+const revokeFormAccess = ({
+  formBlockchainID,
+  userIDs,
+  token,
+}: {
+  formBlockchainID: string;
+  userIDs: string[];
+  token: string;
+}) => {
+  if (userIDs.length === 0) return Promise.resolve(true);
+  return axios
+    .post(
+      `${API_ENDPOINT}/docmodels/revoke`,
+      {
+        docModelId: formBlockchainID,
+        users: userIDs,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then(() => true);
 };
 
 const getFormRawTX = ({
@@ -109,4 +177,12 @@ const sendSignedFormTX = ({
     });
 };
 
-export { getAllForms, FORM_FIELD_TYPE, getFormRawTX, sendSignedFormTX };
+export {
+  getAllForms,
+  FORM_FIELD_TYPE,
+  getFormRawTX,
+  sendSignedFormTX,
+  getFormDetail,
+  grantFormAccess,
+  revokeFormAccess,
+};

@@ -16,6 +16,7 @@ interface User {
 type FormFieldType = "string" | "singleChoice";
 
 interface FormField {
+  label: string;
   name: string;
   type: FormFieldType;
   options?: string[];
@@ -30,14 +31,22 @@ interface TableFormField {
   editing: boolean;
 }
 
+interface Organization {
+  _id: string;
+  name: string;
+}
+
 interface Form {
   _id: string;
   name: string;
+  symbol: string;
+  blockchainId: string;
+  address: string;
   dateCreated: Date;
-  organizationName: string;
-  organizationID: string;
+  organization: Organization;
   modelUI: string;
-  inputFields: [FormField];
+  inputFields: FormField[];
+  grantedFor: string[];
 }
 
 // Doc type definition

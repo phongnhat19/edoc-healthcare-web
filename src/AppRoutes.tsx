@@ -11,7 +11,10 @@ function AppRoutes() {
         <div>
           <Sidebar />
         </div>
-        <div className="app-main">
+        <div
+          className="app-main"
+          style={{ maxHeight: "100vh", overflow: "auto" }}
+        >
           <Header />
           <div className="app-content">
             <div className="app-content--inner">
