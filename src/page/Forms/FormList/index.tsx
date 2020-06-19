@@ -18,6 +18,7 @@ import { ClipLoader } from "react-spinners";
 import { getAllForms } from "../../../services/api/form";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
+import { Link } from "react-router-dom";
 
 const FORM_LIMIT = 10;
 
@@ -43,7 +44,7 @@ const FormListPage = () => {
     const pagingComponents = [];
     for (let index = 1; index <= totalPage; index++) {
       pagingComponents.push(
-        <PaginationItem active={page === index}>
+        <PaginationItem active={page === index} key={`page-${index}`}>
           <PaginationLink href="#/" onClick={() => setPage(index)}>
             {index}
           </PaginationLink>
@@ -60,7 +61,14 @@ const FormListPage = () => {
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
-        <h4>Danh sách mẫu ({renderTotalForm()})</h4>
+        <div className="d-flex align-items-center justify-content-between">
+          <h4>Danh sách mẫu ({renderTotalForm()})</h4>
+          <Link to="/forms/create">
+            <Button color="primary" size="sm">
+              Thêm mẫu
+            </Button>
+          </Link>
+        </div>
         <div className="table-responsive-md d-flex justify-content-center mt-3">
           {loading ? (
             <ClipLoader />
@@ -97,16 +105,10 @@ const FormListPage = () => {
                           {formData.organizationName}
                         </a>
                       </td>
-                      <td className="text-center">
-                        <div>
-                          <Button
-                            size="sm"
-                            color="neutral-first"
-                            className="d-30 btn-pill p-0 btn-icon"
-                          >
-                            Phân quyền
-                          </Button>
-                        </div>
+                      <td className="text-center p-3">
+                        <Button size="sm" color="info">
+                          Phân quyền
+                        </Button>
                       </td>
                     </tr>
                   );

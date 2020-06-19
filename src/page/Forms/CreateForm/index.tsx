@@ -257,6 +257,17 @@ const CreateFormPage = () => {
           <CardFooter className="d-flex justify-content-end">
             <Button
               size="sm"
+              className="py-2 px-4 mr-3"
+              color="danger"
+              onClick={() => window.history.back()}
+              disabled={loading}
+            >
+              <span className="btn-wrapper--label text-uppercase font-weight-bold">
+                Huỷ
+              </span>
+            </Button>
+            <Button
+              size="sm"
               className="py-2 px-4"
               color="primary"
               onClick={handleSubmitForm}
