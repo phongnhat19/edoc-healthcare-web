@@ -22,7 +22,7 @@ const UserContext = createContext({
 });
 
 const SidebarContext = createContext({
-  open: true,
+  open: false,
   setOpen: () => {},
 });
 
@@ -54,7 +54,7 @@ function App() {
     setUserData(userData);
   };
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const localUser = localStorage.getItem(userDataLocalKey);
