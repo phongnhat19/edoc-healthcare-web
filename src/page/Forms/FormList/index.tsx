@@ -110,7 +110,7 @@ const FormListPage = () => {
                           className="font-weight-bold text-black"
                           title="..."
                         >
-                          {formData.organizationName}
+                          {formData.organization.name}
                         </a>
                       </td>
                       <td className="text-center p-3">
