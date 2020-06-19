@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Input, Button } from "reactstrap";
 import { FORM_FIELD_TYPE } from "../../../services/api/form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { WithContext as ReactTags } from "react-tag-input";
 import {
   faSave,
   faTimes,
@@ -49,6 +50,44 @@ const FormFieldTable = ({
     setCurrentFormFields(formFields);
   }, [formFields]);
 
+  const renderOption = (
+    field: {
+      label: string;
+      code: string;
+      type: string;
+      option: string[];
+      default: string;
+      editing: boolean;
+    },
+    fieldIndex: number
+  ) => {
+    if (field.type === "string") return null;
+    return (
+      <ReactTags
+        inputFieldPosition="top"
+        tags={field.option.map((field) => {
+          return { id: field, text: field };
+        })}
+        handleAddition={(newOption) => {
+          const newOptionList = [...field.option].map((field) => {
+            return { id: field, text: field };
+          });
+          newOptionList.push(newOption);
+          updateCurrentField(
+            fieldIndex,
+            "option",
+            newOptionList.map((option) => option.id)
+          );
+        }}
+        handleDelete={(optionIndex) => {
+          const newOptionList = [...field.option];
+          newOptionList.splice(optionIndex, 1);
+          updateCurrentField(fieldIndex, "option", newOptionList);
+        }}
+      />
+    );
+  };
+
   return (
     <div className="table-responsive-md">
       <Table className="text-nowrap mb-0">
@@ -57,7 +96,7 @@ const FormFieldTable = ({
             <th>Tên field</th>
             <th>Loại</th>
             <th>Mã</th>
-            <th>Giá trị mặc định</th>
+            <th>Option</th>
             <th className="text-center">Actions</th>
           </tr>
         </thead>
@@ -123,20 +162,9 @@ const FormFieldTable = ({
                 </td>
                 <td>
                   {field.editing ? (
-                    <Input
-                      bsSize="sm"
-                      type="text"
-                      value={field.default}
-                      onChange={(e) =>
-                        updateCurrentField(
-                          fieldIndex,
-                          "default",
-                          e.target.value
-                        )
-                      }
-                    />
+                    renderOption(field, fieldIndex)
                   ) : (
-                    <b>{field.default}</b>
+                    <b>{field.option.join(",")}</b>
                   )}
                 </td>
                 <td className="d-flex justify-content-center">
