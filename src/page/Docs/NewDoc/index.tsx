@@ -14,56 +14,67 @@ import {
 import { getAllForms } from "../../../services/api/form";
 import { UserContext } from "../../../App";
 import { ClipLoader } from "react-spinners";
-import { type } from "os";
+import { getFormattedDate } from "../../../utils/date";
 
 const NewDocForm = () => {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [issuedPlace, setIssuedPlace] = useState("");
-  const [issuedTime, setIssuedTime] = useState("");
   const [description, setDescription] = useState("");
   const [uri, setUri] = useState("");
 
-  const [allForm, setAllForm] = useState({
-    page: 1,
-    limit: 100,
-    totalItems: 0,
-    totalPages: 0,
-    data: [] as Array<Form>,
-  });
+  const [formList, setFormList] = useState([] as Form[]);
   const [formId, setFormId] = useState("");
-  const [formField, setFormField] = useState([] as Array<FormField>);
+  const [inputData, setInputData] = useState([] as FormInputData[]);
 
   const { token } = useContext(UserContext);
 
-  const getCurrentDate = (): string => {
-    const today = new Date();
-    return (
-      today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear()
-    );
-  };
-
   useEffect(() => {
-    setIssuedTime(getCurrentDate());
-  }, []);
-
-  useEffect(() => {
-    const { page, limit } = allForm;
-    getAllForms({ page, limit, token }).then((response) => {
-      setAllForm(response);
+    getAllForms({ page: 1, limit: 100, token }).then((response) => {
+      setFormList(response.data);
       setLoading(false);
     });
-  }, []);
+  }, [token]);
 
   const handleSubmit = () => {
-    console.log(name, issuedPlace, issuedTime, description, uri);
+    console.log(name, issuedPlace, description, uri);
   };
 
-  useEffect(() => {
-    const selectedForm = allForm.data.filter((form) => form._id === formId)[0];
-    setFormField(selectedForm?.inputFields);
-    console.log(allForm.data.filter((form) => form._id === formId)[0]);
-  }, [formId]);
+  const updateInputData = (fieldCode: string, fieldValue: string) => {
+    const newInputData = [...inputData];
+    let found = false;
+    newInputData.forEach((field) => {
+      if (field.name === fieldCode) {
+        found = true;
+        field.value = fieldValue;
+      }
+    });
+    if (!found) {
+      newInputData.push({
+        name: fieldCode,
+        value: fieldValue,
+      });
+    }
+    setInputData(newInputData);
+  };
+
+  const getInputData = (fieldCode: string) => {
+    let returnValue = "";
+    inputData.some((field) => {
+      if (field.name === fieldCode) {
+        returnValue = field.value;
+        return true;
+      }
+      return false;
+    });
+    return returnValue;
+  };
+
+  const getSelectedFormInputFields = () => {
+    const selectedForm = formList.filter((form) => form._id === formId)[0];
+    if (!selectedForm) return [] as FormField[];
+    return selectedForm.inputFields;
+  };
 
   return (
     <div className="app-inner-content-layout">
@@ -123,7 +134,7 @@ const NewDocForm = () => {
                   <Input
                     type="text"
                     name="issuedTime"
-                    value={issuedTime}
+                    value={getFormattedDate(new Date())}
                     disabled
                   />
                 </Col>
@@ -141,8 +152,7 @@ const NewDocForm = () => {
                     value={formId}
                     onChange={(e) => setFormId(e.target.value)}
                   >
-                    <option key="default" value=""></option>
-                    {allForm.data.map((doc) => (
+                    {formList.map((doc) => (
                       <option key={doc._id} value={doc._id}>
                         {doc.name}
                       </option>
@@ -194,16 +204,35 @@ const NewDocForm = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {formField?.map((form) => (
+                      {getSelectedFormInputFields().map((form) => (
                         <tr>
                           <td>{form.name}</td>
                           <td>
                             {form.type === "string" ? (
-                              <Input type="text" name={type.name} />
+                              <Input
+                                type="text"
+                                value={getInputData(form.name)}
+                                onChange={(e) =>
+                                  updateInputData(form.name, e.target.value)
+                                }
+                              />
                             ) : (
-                              <Input type="select">
-                                <option>A</option>
-                                <option>B</option>
+                              <Input
+                                type="select"
+                                value={getInputData(form.name)}
+                              >
+                                {form.options?.map(
+                                  (optionValue, optionIndex) => {
+                                    return (
+                                      <option
+                                        key={`option-${optionIndex}`}
+                                        value={optionValue}
+                                      >
+                                        {optionValue}
+                                      </option>
+                                    );
+                                  }
+                                )}
                               </Input>
                             )}
                           </td>
