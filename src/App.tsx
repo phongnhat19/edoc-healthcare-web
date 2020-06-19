@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import AuthRoutes from "./AuthRoutes";
 import AppRoutes from "./AppRoutes";
 import "./assets/base.scss";
+import "./App.css";
 
 const UserContext = createContext({
   userData: {
@@ -51,7 +52,7 @@ function App() {
   const updateUserProfile = (userData: User) => {
     localStorage.setItem(userDataLocalKey, JSON.stringify(userData));
     setUserData(userData);
-  }
+  };
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -84,7 +85,13 @@ function App() {
 
   return (
     <UserContext.Provider
-      value={{ userData, token, saveUserCredentials, updateUserProfile, logout }}
+      value={{
+        userData,
+        token,
+        saveUserCredentials,
+        updateUserProfile,
+        logout,
+      }}
     >
       {!token ? (
         <AuthRoutes />

@@ -187,10 +187,14 @@ const NewUserPage = () => {
           </CardBody>
           <div className="divider" />
           <CardFooter className="d-flex justify-content-end">
-            <Button size="sm" outline color="primary" className="py-2 px-4">
+            <Button
+              size="sm"
+              color="danger"
+              className="py-2 px-4 mr-3"
+              onClick={() => window.history.back()}
+            >
               Hủy
             </Button>
-            &nbsp;
             <Button size="sm" className="py-2 px-4" color="primary">
               Tạo
             </Button>
