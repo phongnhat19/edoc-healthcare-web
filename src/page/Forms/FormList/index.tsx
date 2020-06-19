@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisH,
   faAngleDoubleLeft,
   faChevronLeft,
   faAngleDoubleRight,
@@ -9,7 +8,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Table,
-  CustomInput,
   Pagination,
   PaginationItem,
   PaginationLink,
@@ -70,14 +68,6 @@ const FormListPage = () => {
             <Table className="text-nowrap mb-0">
               <thead className="thead-light">
                 <tr>
-                  <th className="text-center" style={{ width: "5%" }}>
-                    <CustomInput
-                      type="checkbox"
-                      id="CustomCheckbox3"
-                      className="align-self-start"
-                      label="&nbsp;"
-                    />
-                  </th>
                   <th>Tên mẫu</th>
                   <th>Ngày tạo</th>
                   <th>Người tạo</th>
@@ -88,14 +78,6 @@ const FormListPage = () => {
                 {formList.map((formData: Form, formIndex: number) => {
                   return (
                     <tr key={`form-${formIndex}`}>
-                      <td className="text-center">
-                        <CustomInput
-                          type="checkbox"
-                          id={`form-${formIndex}`}
-                          className="align-self-start"
-                          label="&nbsp;"
-                        />
-                      </td>
                       <td>
                         <b>{formData.name}</b>
                         {/* <span className="text-black-50 d-block">Y tế</span> */}
@@ -122,10 +104,7 @@ const FormListPage = () => {
                             color="neutral-first"
                             className="d-30 btn-pill p-0 btn-icon"
                           >
-                            <FontAwesomeIcon
-                              icon={faEllipsisH}
-                              className="font-size-lg"
-                            />
+                            Phân quyền
                           </Button>
                         </div>
                       </td>
