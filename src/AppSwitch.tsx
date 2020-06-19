@@ -6,7 +6,7 @@ import FormListPage from "./page/Forms/FormList";
 import CreateFormPage from "./page/Forms/CreateForm";
 import DocListPage from "./page/Docs/DocList";
 import UserListPage from "./page/Users/UserList";
-import NewDocForm from "./page/Docs/NewDocForm";
+import NewDocForm from "./page/Docs/NewDoc";
 import NewUserPage from "./page/Users/NewUser";
 
 function AppSwitch() {
