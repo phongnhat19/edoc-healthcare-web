@@ -176,6 +176,7 @@ const NewDocForm = () => {
                     value={formId}
                     onChange={(e) => setFormId(e.target.value)}
                   >
+                    <option value={""}>Chọn mẫu hồ sơ</option>
                     {formList.map((doc) => (
                       <option key={doc._id} value={doc._id}>
                         {doc.name}
@@ -232,40 +233,32 @@ const NewDocForm = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {getSelectedFormInputFields().map((form) => (
-                      <tr>
-                        <td>{form.name}</td>
-                        <td>
-                          {form.type === "string" ? (
-                            <Input
-                              type="text"
-                              value={getInputData(form.name)}
-                              onChange={(e) =>
-                                updateInputData(form.name, e.target.value)
-                              }
-                            />
-                          ) : (
-                            <Input
-                              type="select"
-                              value={getInputData(form.name)}
-                              onChange={(e) =>
-                                updateInputData(form.name, e.target.value)
-                              }
-                            >
-                              {form.options?.map(
-                                (optionValue, optionIndex) => {
-                                  return (
-                                    <option
-                                      key={`option-${optionIndex}`}
-                                      value={optionValue}
-                                    >
-                                      {optionValue}
-                                    </option>
-                                  );
+                      {getSelectedFormInputFields().map((form) => (
+                        <tr>
+                          <td>{form.label}</td>
+                          <td>
+                            {form.type === "string" ? (
+                              <Input
+                                type="text"
+                                value={getInputData(form.name)}
+                                onChange={(e) =>
+                                  updateInputData(form.name, e.target.value)
                                 }
-                              )}
-                            </Input>
-                          )}
+                              />
+                            ) : (
+                              <Input
+                                type="select"
+                                value={getInputData(form.name)}
+                                onChange={(e) => updateInputData(form.name, e.target.value)}
+                              >
+                                {
+                                  form.options?.map( (opt, idx) => <option key={idx} value={opt}>{opt}</option> )
+
+                                }
+                              </Input>
+                              )
+                            }
+                          )
                         </td>
                       </tr>
                     ))}

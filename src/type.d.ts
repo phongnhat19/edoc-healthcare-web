@@ -16,6 +16,7 @@ interface User {
 type FormFieldType = "string" | "singleChoice";
 
 interface FormField {
+  label: string;
   name: string;
   type: FormFieldType;
   options?: string[];
