@@ -2,8 +2,7 @@ import React, { useContext } from "react";
 import clsx from "clsx";
 import { SidebarContext } from "../../App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDotCircle, faArrowsAltH } from "@fortawesome/free-solid-svg-icons";
-import { UncontrolledTooltip } from "reactstrap";
+import { faArrowsAltH } from "@fortawesome/free-solid-svg-icons";
 
 import { NavLink } from "react-router-dom";
 
@@ -24,10 +23,7 @@ const SidebarHeader = () => {
             className="app-sidebar-logo"
           >
             <div className="app-sidebar-logo--icon">
-              <img
-                alt="Bamburgh React Admin Dashboard with Reactstrap PRO"
-                src={projectLogo}
-              />
+              <img alt="VBC" src={projectLogo} />
             </div>
             <div className="app-sidebar-logo--text">
               <span>EDoc</span>
@@ -37,28 +33,14 @@ const SidebarHeader = () => {
           </NavLink>
         </div>
         <button
-          onClick={toggleSidebar}
-          className="btn btn-sm collapse-sidebar-btn"
-          id="CollapseSidebarTooltip"
-        >
-          <FontAwesomeIcon icon={faDotCircle} size="lg" />
-        </button>
-        <UncontrolledTooltip
-          target="CollapseSidebarTooltip"
-          container=".app-sidebar"
-          placement="right"
-        >
-          Collapse sidebar
-        </UncontrolledTooltip>
-        <button
           className={clsx(
             "navbar-toggler hamburger hamburger--elastic toggle-mobile-sidebar-btn",
             { "is-active": sidebarOpen }
           )}
           onClick={toggleSidebar}
         >
-          <span className="hamburger-box">
-            <span className="hamburger-inner" />
+          <span className="hamburger-box" onClick={toggleSidebar}>
+            <span className="hamburger-inner" onClick={toggleSidebar} />
           </span>
         </button>
         <button
@@ -68,13 +50,6 @@ const SidebarHeader = () => {
         >
           <FontAwesomeIcon icon={faArrowsAltH} />
         </button>
-        <UncontrolledTooltip
-          target="ExpandSidebarTooltip"
-          container=".app-sidebar"
-          placement="right"
-        >
-          Expand sidebar
-        </UncontrolledTooltip>
       </div>
     </>
   );

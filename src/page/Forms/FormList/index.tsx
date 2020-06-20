@@ -19,6 +19,7 @@ import { getAllForms } from "../../../services/api/form";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
 import { Link } from "react-router-dom";
+import PermissionModal from "./PermissionModal";
 
 const FORM_LIMIT = 10;
 
@@ -28,6 +29,8 @@ const FormListPage = () => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [totalItem, setTotalItem] = useState(0);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { token } = useContext(UserContext);
 
@@ -60,6 +63,11 @@ const FormListPage = () => {
 
   return (
     <div className="app-inner-content-layout">
+      <PermissionModal
+        isOpen={showPermissionModal}
+        toggle={() => setShowPermissionModal(!showPermissionModal)}
+        formID={formList[selectedIndex] ? formList[selectedIndex]._id : ""}
+      />
       <div className="app-inner-content-layout--main">
         <div className="d-flex align-items-center justify-content-between">
           <h4>Danh sách mẫu ({renderTotalForm()})</h4>
@@ -87,7 +95,9 @@ const FormListPage = () => {
                   return (
                     <tr key={`form-${formIndex}`}>
                       <td>
-                        <b>{formData.name}</b>
+                        <Link to={`/forms/detail/${formData._id}`}>
+                          <b>{formData.name}</b>
+                        </Link>
                         {/* <span className="text-black-50 d-block">Y tế</span> */}
                       </td>
                       <td>
@@ -102,11 +112,18 @@ const FormListPage = () => {
                           className="font-weight-bold text-black"
                           title="..."
                         >
-                          {formData.organizationName}
+                          {formData.organization.name}
                         </a>
                       </td>
                       <td className="text-center p-3">
-                        <Button size="sm" color="info">
+                        <Button
+                          size="sm"
+                          color="info"
+                          onClick={() => {
+                            setSelectedIndex(formIndex);
+                            setShowPermissionModal(true);
+                          }}
+                        >
                           Phân quyền
                         </Button>
                       </td>
