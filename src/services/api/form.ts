@@ -28,7 +28,7 @@ const getAllForms = ({
         totalPages: response.data.totalPages,
         page: response.data.page,
         limit: response.data.limit,
-        data: [] as Array<Form>,
+        data: [] as Form[],
       };
       responseData.data = response.data.data.map((formObj: any) => {
         return {
@@ -38,6 +38,7 @@ const getAllForms = ({
           organization: formObj.organization,
           modelUI: formObj.modelUI,
           inputFields: formObj.inputFields,
+          blockchainId: formObj.blockchainId,
         } as Form;
       });
       return responseData;
@@ -172,7 +173,6 @@ const sendSignedFormTX = ({
       }
     )
     .then((response) => {
-      console.log(response.data);
       return response;
     });
 };

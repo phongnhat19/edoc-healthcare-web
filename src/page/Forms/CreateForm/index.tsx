@@ -260,7 +260,7 @@ const CreateFormPage = () => {
               size="sm"
               className="py-2 px-4 mr-3"
               color="danger"
-              onClick={() => window.history.back()}
+              onClick={() => (window.location.href = "/forms/list")}
               disabled={loading}
             >
               <span className="btn-wrapper--label text-uppercase font-weight-bold">
