@@ -106,6 +106,7 @@ const CreateFormPage = () => {
       modelUI,
       inputFields: formFields.map((field) => {
         const resultObj = {
+          label: field.label,
           name: field.code,
           type: field.type as FormFieldType,
           options: field.option,
