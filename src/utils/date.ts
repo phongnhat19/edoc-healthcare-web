@@ -9,4 +9,10 @@ const getFormattedDate = (date: Date) => {
   )}`;
 };
 
-export { getFormattedDate };
+const getIssueTimeFormat = (date: Date) => {
+  return `${addZero(date.getMonth() + 1)}/${addZero(date.getDate())}/${addZero(
+    date.getFullYear()
+  )}`;
+};
+
+export { getFormattedDate, getIssueTimeFormat };

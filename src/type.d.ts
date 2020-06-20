@@ -22,6 +22,11 @@ interface FormField {
   options?: string[];
 }
 
+interface FormValue {
+  name: string;
+  value: string;
+}
+
 interface TableFormField {
   label: string;
   code: string;
