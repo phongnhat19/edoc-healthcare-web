@@ -57,7 +57,6 @@ const NewDocForm = () => {
 
   const handleSubmit = () => {
     let isValid = checkValid();
-    ;
     if (!isValid) return;
   };
 
@@ -248,6 +247,7 @@ const NewDocForm = () => {
                             <Input
                               type="select"
                               value={getInputData(form.name)}
+                              selected={form.options?[0] : "" }
                               onChange={(e) => updateInputData(form.name, e.target.value)}
                             >
                               {
