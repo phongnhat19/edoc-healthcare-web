@@ -34,7 +34,7 @@ const NewDocForm = () => {
     });
   }, [token]);
 
-  const checkValid = () : boolean => {
+  const checkValid = (): boolean => {
     let isValid = true;
     if (name === "") {
       setFormNameError("Tên không được để trống");
@@ -56,7 +56,8 @@ const NewDocForm = () => {
   }
 
   const handleSubmit = () => {
-    let isValid = checkValid();;
+    let isValid = checkValid();
+    ;
     if (!isValid) return;
   };
 
@@ -233,32 +234,27 @@ const NewDocForm = () => {
                     </tr>
                     </thead>
                     <tbody>
-                      {getSelectedFormInputFields().map((form) => (
-                        <tr>
-                          <td>{form.label}</td>
-                          <td>
-                            {form.type === "string" ? (
-                              <Input
-                                type="text"
-                                value={getInputData(form.name)}
-                                onChange={(e) =>
-                                  updateInputData(form.name, e.target.value)
-                                }
-                              />
-                            ) : (
-                              <Input
-                                type="select"
-                                value={getInputData(form.name)}
-                                onChange={(e) => updateInputData(form.name, e.target.value)}
-                              >
-                                {
-                                  form.options?.map( (opt, idx) => <option key={idx} value={opt}>{opt}</option> )
-
-                                }
-                              </Input>
-                              )
-                            }
-                          )
+                    {getSelectedFormInputFields().map((form) => (
+                      <tr>
+                        <td>{form.name}</td>
+                        <td>
+                          {form.type === "string" ? (
+                            <Input
+                              type="text"
+                              value={getInputData(form.name)}
+                              onChange={(e) => updateInputData(form.name, e.target.value)}
+                            />
+                          ) : (
+                            <Input
+                              type="select"
+                              value={getInputData(form.name)}
+                              onChange={(e) => updateInputData(form.name, e.target.value)}
+                            >
+                              {
+                                form.options?.map((opt, idx) => <option key={idx} value={opt}>{opt}</option>)
+                              }
+                            </Input>
+                          )}
                         </td>
                       </tr>
                     ))}
