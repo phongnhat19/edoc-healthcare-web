@@ -9,7 +9,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Table,
-  CustomInput,
   Badge,
   Pagination,
   PaginationItem,
@@ -20,7 +19,11 @@ import { getAllDocs } from "../../../services/api/doc";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
 import { ClipLoader } from "react-spinners";
+<<<<<<< HEAD
 import {NavLink} from "react-router-dom";
+=======
+import { Link } from "react-router-dom";
+>>>>>>> d5872e08b6f96128ebd9c3da2be0f345035d2f1d
 
 const DOC_LIMIT = 10;
 
@@ -46,7 +49,7 @@ const DocListPage = () => {
     const pagingComponents = [];
     for (let index = 1; index <= totalPage; index++) {
       pagingComponents.push(
-        <PaginationItem active={page === index}>
+        <PaginationItem active={page === index} key={`page-${index}`}>
           <PaginationLink href="#/" onClick={() => setPage(index)}>
             {index}
           </PaginationLink>
@@ -63,7 +66,14 @@ const DocListPage = () => {
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
-        <h4>Danh sách hồ sơ ({renderTotalDoc()})</h4>
+        <div className="d-flex align-items-center justify-content-between">
+          <h4>Danh sách hồ sơ ({renderTotalDoc()})</h4>
+          <Link to="/documents/create">
+            <Button color="primary" size="sm">
+              Thêm hồ sơ
+            </Button>
+          </Link>
+        </div>
         <div className="table-responsive-md d-flex justify-content-center mt-3">
           {loading ? (
             <ClipLoader />
@@ -71,14 +81,6 @@ const DocListPage = () => {
             <Table className="text-nowrap mb-0">
               <thead className="thead-light">
                 <tr>
-                  <th className="text-center" style={{ width: "5%" }}>
-                    <CustomInput
-                      type="checkbox"
-                      id="CustomCheckbox3"
-                      className="align-self-start"
-                      label="&nbsp;"
-                    />
-                  </th>
                   <th>Tên hồ sơ</th>
                   <th>Ngày tạo</th>
                   <th className="text-center" style={{ width: "20%" }}>
@@ -91,15 +93,7 @@ const DocListPage = () => {
               <tbody className="bg-white">
                 {docList.map((docObj) => {
                   return (
-                    <tr>
-                      <td className="text-center">
-                        <CustomInput
-                          type="checkbox"
-                          id="doc-2"
-                          className="align-self-start"
-                          label="&nbsp;"
-                        />
-                      </td>
+                    <tr key={`doc-${docObj._id}`}>
                       <td>
                         <NavLink to={`/documents/detail/${docObj._id}`}>
                           <b>{docObj.name}</b>
