@@ -51,4 +51,17 @@ const getAlDocTypes = ({ token = "" }: { token: string }) => {
     .then((response) => response.data);
 };
 
-export { getAllDocs, getAlDocTypes };
+const getDocActivities = ({token = "", docId = ""} : {token: string, docId: string}) => {
+  return axios
+    .get(`${API_ENDPOINT}/docs/activities`, {
+      headers: {
+        params: {docId},
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+      console.log(response);
+    });
+}
+
+export { getAllDocs, getAlDocTypes, getDocActivities };

@@ -20,6 +20,7 @@ import { getAllDocs } from "../../../services/api/doc";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
 import { ClipLoader } from "react-spinners";
+import {NavLink} from "react-router-dom";
 
 const DOC_LIMIT = 10;
 
@@ -100,7 +101,9 @@ const DocListPage = () => {
                         />
                       </td>
                       <td>
-                        <b>{docObj.name}</b>
+                        <NavLink to={`/documents/detail/${docObj._id}`}>
+                          <b>{docObj.name}</b>
+                        </NavLink>
                         <span className="text-black-50 d-block">
                           {docObj.type}
                         </span>
