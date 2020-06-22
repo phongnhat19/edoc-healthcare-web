@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -8,14 +8,15 @@ import {
   NavLink as NavLinkStrap,
   Row,
   TabContent,
-  TabPane
+  TabPane,
 } from "reactstrap";
 import clsx from "clsx";
 import DocInfo from "./DocInfo";
 import DocActivity from "./DocActivity";
+import { useParams } from "react-router-dom";
 
 const DocDetailPage = () => {
-
+  const { docId } = useParams();
   const [activeTab, setActiveTab] = useState("information");
   const toggle = (tab: any) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -33,7 +34,9 @@ const DocDetailPage = () => {
                     <Nav tabs>
                       <NavItem>
                         <NavLinkStrap
-                          className={clsx({ active: activeTab === "information" })}
+                          className={clsx({
+                            active: activeTab === "information",
+                          })}
                           onClick={() => {
                             toggle("information");
                           }}
@@ -60,14 +63,14 @@ const DocDetailPage = () => {
                       <TabPane tabId="information">
                         <Row>
                           <Col sm="12">
-                            <DocInfo />
+                            <DocInfo docId={docId} />
                           </Col>
                         </Row>
                       </TabPane>
                       <TabPane tabId="activity">
                         <Row>
                           <Col sm="12">
-                            <DocActivity />
+                            <DocActivity docId={docId} />
                           </Col>
                         </Row>
                       </TabPane>
@@ -81,6 +84,6 @@ const DocDetailPage = () => {
       </div>
     </div>
   );
-}
+};
 
-export default  DocDetailPage;
+export default DocDetailPage;

@@ -19,11 +19,7 @@ import { getAllDocs } from "../../../services/api/doc";
 import { UserContext } from "../../../App";
 import { getFormattedDate } from "../../../utils/date";
 import { ClipLoader } from "react-spinners";
-<<<<<<< HEAD
-import {NavLink} from "react-router-dom";
-=======
-import { Link } from "react-router-dom";
->>>>>>> d5872e08b6f96128ebd9c3da2be0f345035d2f1d
+import { NavLink, Link } from "react-router-dom";
 
 const DOC_LIMIT = 10;
 
