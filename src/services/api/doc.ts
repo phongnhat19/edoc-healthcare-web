@@ -52,6 +52,59 @@ const getAllDocTypes = ({ token = "" }: { token: string }) => {
     .then((response) => response.data);
 };
 
+// TODO: complete this api
+const getDocActivities = ({
+  token = "",
+  docId = "",
+}: {
+  token: string;
+  docId: string;
+}) => {
+  return axios
+    .get(`${API_ENDPOINT}/docs/activities`, {
+      params: { docId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const getDocById = ({
+  token = "",
+  docId = "",
+}: {
+  token: string;
+  docId: string;
+}) => {
+  return axios
+    .get(`${API_ENDPOINT}/docs/by-id`, {
+      params: { id: docId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      const { data } = response;
+      return {
+        _id: data._id,
+        name: data.name,
+        description: data.description,
+        uri: data.uri,
+        inputData: data.inputData,
+        dateCreated: new Date(data.createdAt),
+        owner: data.owner,
+        issuedPlace: data.issuedPlace,
+        issuedTime: new Date(data.issuedTime),
+        issuer: data.issuer,
+        type: data.type,
+        docModel: data.docModel,
+      };
+    });
+};
+
 const getDocRawTX = async ({
   token,
   docModelId,
@@ -127,4 +180,11 @@ const sendSignedDocTX = async ({
   return response;
 };
 
-export { getAllDocs, getAllDocTypes, getDocRawTX, sendSignedDocTX };
+export {
+  getAllDocs,
+  getAllDocTypes,
+  getDocById,
+  getDocRawTX,
+  sendSignedDocTX,
+  getDocActivities,
+};
