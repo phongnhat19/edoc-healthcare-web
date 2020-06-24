@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Input, Button } from "reactstrap";
-import { FORM_FIELD_TYPE } from "../../../services/api/form";
+import { FORM_FIELD_TYPE } from "../../../../services/api/form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { WithContext as ReactTags } from "react-tag-input";
 import {

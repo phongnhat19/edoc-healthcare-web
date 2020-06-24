@@ -10,6 +10,11 @@ import {
   Input,
   Row,
   Table,
+  Nav,
+  NavItem,
+  NavLink as NavLinkStrap,
+  TabContent,
+  TabPane,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { getAllForms } from "../../../services/api/form";
@@ -27,6 +32,7 @@ import {
   getSignedTx,
 } from "../../../utils/blockchain";
 import Swal from "sweetalert2";
+import clsx from "clsx";
 
 const NewDocForm = () => {
   const [loading, setLoading] = useState(true);
@@ -49,6 +55,7 @@ const NewDocForm = () => {
   const [formDescriptionError, setFormDescriptionError] = useState("");
   const [formUriError, setFormUriError] = useState("");
   const [errorInputData, setErrorInputData] = useState("");
+  const [activeTab, setActiveTab] = useState("formInfo");
 
   const { token, userData } = useContext(UserContext);
 
@@ -185,6 +192,10 @@ const NewDocForm = () => {
     )[0];
     if (!selectedForm) return [] as FormField[];
     return selectedForm.inputFields;
+  };
+
+  const toggleTab = (tab: string) => {
+    if (activeTab !== tab) setActiveTab(tab);
   };
 
   return (
@@ -339,60 +350,95 @@ const NewDocForm = () => {
                   <FormFeedback>{formUriError}</FormFeedback>
                 </Col>
               </Row>
-              <Row className="justify-content-end mt-4">
-                <Col xs="12" lg="10">
-                  <Table className="text-nowrap mb-0">
-                    <thead>
-                      <tr>
-                        <th>Thông tin</th>
-                        <th>Giá trị</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getSelectedFormInputFields().map((form) => (
-                        <tr key={`input-data-${form.name}`}>
-                          <td>{form.name}</td>
-                          <td>
-                            {form.type === "string" ? (
-                              <Input
-                                type="text"
-                                value={getInputData(form.name)}
-                                onChange={(e) =>
-                                  updateInputData(form.name, e.target.value)
-                                }
-                                invalid={
-                                  getInputData(form.name) === "" &&
-                                  errorInputData !== ""
-                                }
-                              />
-                            ) : (
-                              <Input
-                                type="select"
-                                value={getInputData(form.name)}
-                                onChange={(e) =>
-                                  updateInputData(form.name, e.target.value)
-                                }
-                                invalid={
-                                  getInputData(form.name) === "" &&
-                                  errorInputData !== ""
-                                }
-                              >
-                                <option value="">Chọn giá trị</option>
-                                {form.options?.map((opt, idx) => (
-                                  <option key={idx} value={opt}>
-                                    {opt}
-                                  </option>
-                                ))}
-                              </Input>
-                            )}
-                            {getInputData(form.name) === "" && (
-                              <FormFeedback>{errorInputData}</FormFeedback>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+              <Row className="justify-content-center mt-3">
+                <Col span={12}>
+                  <Nav tabs>
+                    <NavItem>
+                      <NavLinkStrap
+                        className={clsx({ active: activeTab === "formInfo" })}
+                        onClick={() => {
+                          toggleTab("formInfo");
+                        }}
+                      >
+                        Thông tin mẫu
+                      </NavLinkStrap>
+                    </NavItem>
+                    <NavItem>
+                      <NavLinkStrap
+                        className={clsx({
+                          active: activeTab === "recipentInfo",
+                        })}
+                        onClick={() => {
+                          toggleTab("recipentInfo");
+                        }}
+                      >
+                        Thông tin người nhận
+                      </NavLinkStrap>
+                    </NavItem>
+                  </Nav>
+                </Col>
+              </Row>
+              <Row className="justify-content-center mt-3">
+                <Col span={12}>
+                  <TabContent activeTab={activeTab}>
+                    <TabPane tabId="formInfo">
+                      <Table className="text-nowrap mb-0">
+                        <thead>
+                          <tr>
+                            <th>Thông tin</th>
+                            <th>Giá trị</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getSelectedFormInputFields().map((form) => (
+                            <tr key={`input-data-${form.name}`}>
+                              <td>{form.name}</td>
+                              <td>
+                                {form.type === "string" ? (
+                                  <Input
+                                    type="text"
+                                    value={getInputData(form.name)}
+                                    onChange={(e) =>
+                                      updateInputData(form.name, e.target.value)
+                                    }
+                                    invalid={
+                                      getInputData(form.name) === "" &&
+                                      errorInputData !== ""
+                                    }
+                                  />
+                                ) : (
+                                  <Input
+                                    type="select"
+                                    value={getInputData(form.name)}
+                                    onChange={(e) =>
+                                      updateInputData(form.name, e.target.value)
+                                    }
+                                    invalid={
+                                      getInputData(form.name) === "" &&
+                                      errorInputData !== ""
+                                    }
+                                  >
+                                    <option value="">Chọn giá trị</option>
+                                    {form.options?.map((opt, idx) => (
+                                      <option key={idx} value={opt}>
+                                        {opt}
+                                      </option>
+                                    ))}
+                                  </Input>
+                                )}
+                                {getInputData(form.name) === "" && (
+                                  <FormFeedback>{errorInputData}</FormFeedback>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </TabPane>
+                    <TabPane tabId="recipentInfo">
+                      <div>Thông tin người nhận</div>
+                    </TabPane>
+                  </TabContent>
                 </Col>
               </Row>
             </CardBody>
