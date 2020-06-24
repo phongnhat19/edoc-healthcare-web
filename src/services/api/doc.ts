@@ -180,6 +180,34 @@ const sendSignedDocTX = async ({
   return response;
 };
 
+const getActivityRawTX = ({
+  token,
+  activityForm,
+}: {
+  token: string;
+  activityForm: NewActivityForm;
+}) => {
+  console.log(token);
+  console.log(activityForm);
+  return axios
+    .post(
+      `${API_ENDPOINT}/docs/activities/get-raw-tx`,
+      {
+        activityForm,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((res) => console.log(res));
+};
+
+const sendSignedActivityTX = () => {
+  console.log("");
+};
+
 export {
   getAllDocs,
   getAllDocTypes,
@@ -187,4 +215,6 @@ export {
   getDocRawTX,
   sendSignedDocTX,
   getDocActivities,
+  getActivityRawTX,
+  sendSignedActivityTX,
 };

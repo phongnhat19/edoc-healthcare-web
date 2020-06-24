@@ -68,3 +68,29 @@ interface Doc {
 
 // Activity type definition
 type ActivityStatus = "ACTIVE";
+
+interface ImageField {
+  title: string;
+  url: string;
+}
+
+interface StatusField {
+  statusID: string;
+  name: string;
+  backgroundColor: string;
+}
+interface DescriptionField {
+  key: string;
+  value: string;
+}
+interface NewActivityForm {
+  docId: string;
+  name: string;
+  recordingTime: string;
+  recordingPerson: string;
+  recordingPlace: string;
+  status: StatusField;
+  images: ImageField[];
+  notes: string;
+  description: DescriptionField[];
+}
