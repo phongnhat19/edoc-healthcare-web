@@ -16,6 +16,7 @@
     "availity-reactstrap-validation": "^2.6.1",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
+    "cloudinary": "^1.22.0",
     "clsx": "^1.1.0",
     "crypto-js": "^4.0.0",
     "draft-js": "^0.11.5",

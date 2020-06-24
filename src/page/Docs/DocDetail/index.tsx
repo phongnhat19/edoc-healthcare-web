@@ -11,8 +11,8 @@ import {
   TabPane,
 } from "reactstrap";
 import clsx from "clsx";
-import DocInfo from "./DocInfo";
-import DocActivity from "./DocActivity";
+import DocInfo from "./components/DocInfo";
+import DocActivity from "./components/DocActivity";
 import { useParams } from "react-router-dom";
 
 const DocDetailPage = () => {

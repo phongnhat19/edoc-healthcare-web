@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 
 import { ClipLoader } from "react-spinners";
-import { UserContext } from "../../../App";
-import { getDocById } from "../../../services/api/doc";
-import { getFormDetail } from "../../../services/api/form";
+import { UserContext } from "../../../../App";
+import { getDocById } from "../../../../services/api/doc";
+import { getFormDetail } from "../../../../services/api/form";
 import { Row, Col, Input } from "reactstrap";
-import { getFormattedDate } from "../../../utils/date";
+import { getFormattedDate } from "../../../../utils/date";
 
 const DocInfo = ({ docId }: { docId: string }) => {
   const { token } = useContext(UserContext);
@@ -16,10 +16,8 @@ const DocInfo = ({ docId }: { docId: string }) => {
   useEffect(() => {
     getDocById({ token, docId }).then((docRes) => {
       setDocInfo(docRes);
-      console.log(docRes);
       getFormDetail({ token, formID: docRes.docModel._id }).then(
         (docModelRes) => {
-          console.log(docModelRes);
           setDocModelDetail(docModelRes);
           setLoading(false);
         }
