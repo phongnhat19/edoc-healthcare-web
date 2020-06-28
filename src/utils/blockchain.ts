@@ -1,16 +1,18 @@
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 import EthereumTx from "ethereumjs-tx";
 import util from "ethjs-util";
 import CryptoJS from "crypto-js";
 
-// let wallet = ethers.Wallet.createRandom();
-// let randomMnemonic = wallet.mnemonic;
-// let walletPath = {
-//   standard: `m/44'/60'/0'/0/0`,
-// };
-// let hdnode = ethers.utils.HDNode.fromMnemonic(randomMnemonic.phrase);
-// let node = hdnode.derivePath(walletPath.standard);
-// const { address, publicKey, privateKey, mnemonic } = node;
+const generateEOA = () => {
+  let wallet = ethers.Wallet.createRandom();
+  let randomMnemonic = wallet.mnemonic;
+  let walletPath = {
+    standard: `m/44'/60'/0'/0/0`,
+  };
+  let hdnode = ethers.utils.HDNode.fromMnemonic(randomMnemonic.phrase);
+  return hdnode.derivePath(walletPath.standard);
+  // const { address, publicKey, privateKey, mnemonic } = node;
+};
 
 const getClientPassphrase = (userID: string) => {
   // FOR DEVELOPMENT
@@ -46,4 +48,10 @@ const symDecrypt = (ciphertext: string, secret: string) => {
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
-export { getClientPassphrase, getSignedTx, symEncrypt, symDecrypt };
+export {
+  getClientPassphrase,
+  getSignedTx,
+  symEncrypt,
+  symDecrypt,
+  generateEOA,
+};
