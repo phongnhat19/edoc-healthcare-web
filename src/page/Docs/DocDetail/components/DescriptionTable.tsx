@@ -31,7 +31,7 @@ const DescriptionTable = ({
 
   useEffect(() => {
     descriptionUpdateHandler(descriptions);
-  }, [descriptions]);
+  }, [descriptions, descriptionUpdateHandler]);
 
   return (
     <div className="table-responsive-md">
