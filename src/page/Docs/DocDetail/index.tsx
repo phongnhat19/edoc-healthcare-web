@@ -13,10 +13,8 @@ import {
 import clsx from "clsx";
 import DocInfo from "./components/DocInfo";
 import DocActivity from "./components/DocActivity";
-import { useParams } from "react-router-dom";
 
 const DocDetailPage = () => {
-  const { docId } = useParams();
   const [activeTab, setActiveTab] = useState("information");
   const toggle = (tab: any) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -63,14 +61,14 @@ const DocDetailPage = () => {
                       <TabPane tabId="information">
                         <Row>
                           <Col sm="12">
-                            <DocInfo docId={docId} />
+                            <DocInfo />
                           </Col>
                         </Row>
                       </TabPane>
                       <TabPane tabId="activity">
                         <Row>
                           <Col sm="12">
-                            <DocActivity docId={docId} />
+                            <DocActivity />
                           </Col>
                         </Row>
                       </TabPane>
