@@ -101,6 +101,8 @@ const getDocById = ({
         issuer: data.issuer,
         type: data.type,
         docModel: data.docModel,
+        blockchainId: data.blockchainId,
+        activities: data.activities,
       };
     });
 };
@@ -165,7 +167,7 @@ const sendSignedDocTX = async ({
   sessionKey: string;
   signedTx: string;
 }) => {
-  const response = await axios.post(
+  return await axios.post(
     `${API_ENDPOINT}/docs/send-signed-tx`,
     {
       sessionKey,
@@ -177,35 +179,51 @@ const sendSignedDocTX = async ({
       },
     }
   );
-  return response;
 };
 
-const getActivityRawTX = ({
+const getActivityRawTX = async ({
   token,
   activityForm,
 }: {
   token: string;
   activityForm: NewActivityForm;
 }) => {
-  console.log(token);
-  console.log(activityForm);
-  return axios
-    .post(
-      `${API_ENDPOINT}/docs/activities/get-raw-tx`,
-      {
-        activityForm,
+  const response = await axios.post(
+    `${API_ENDPOINT}/docs/activities/get-raw-tx`,
+    activityForm,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-    .then((res) => console.log(res));
+    }
+  );
+  return {
+    sessionKey: response.data.sessionKey,
+    rawTx: response.data.rawTx,
+  };
 };
 
-const sendSignedActivityTX = () => {
-  console.log("");
+const sendSignedActivityTX = async ({
+  token,
+  sessionKey,
+  signedTx,
+}: {
+  token: string;
+  sessionKey: string;
+  signedTx: string;
+}) => {
+  return await axios.post(
+    `${API_ENDPOINT}/docs/activities/send-signed-tx`,
+    {
+      sessionKey,
+      signedTx,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 export {

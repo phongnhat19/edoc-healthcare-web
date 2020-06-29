@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import cloudinary from "cloudinary";
 import {
   Row,
   Col,
@@ -10,29 +9,38 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import axios from "axios";
+import ActivityName from "./ActivityName";
+import Swal from "sweetalert2";
 
 import {
   getActivityRawTX,
   sendSignedActivityTX,
-} from "../../../../services/api/doc";
-import {
-  CLOUD_NAME,
-  CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET,
-  CLOUDINARY_URL,
-} from "../../../../services/api/constant";
+} from "../../../../../services/api/doc";
 
 import { useDropzone } from "react-dropzone";
 import DescriptionTable from "./DescriptionTable";
-import { UserContext } from "../../../../App";
-import "../style.css";
+import { UserContext } from "../../../../../App";
+import "../../style.css";
+import ActivityTime from "./ActivityTime";
+import ActivityRecordingPerson from "./ActivityRecordingPerson";
+import ActivityRecordingPlace from "./ActivityRecordingPlace";
+import ActivityNote from "./ActivityNote";
+import ActivityStatus from "./ActivityStatus";
+import ActivityStatusBackground from "./ActivityStatusBackground";
+import { useParams } from "react-router";
+import { getDocById } from "../../../../../services/api/doc";
+import {
+  symDecrypt,
+  getClientPassphrase,
+  getSignedTx,
+} from "../../../../../utils/blockchain";
 
 const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
+  const { docId } = useParams();
+  const [creating, setCreating] = useState(false);
   const [name, setName] = useState("");
   const [formNameError, setFormNameError] = useState("");
-  const [recordingTime, setRecordingTime] = useState("");
-  const [formRecordingTimeError, setFormRecordingTimeError] = useState("");
+  const [recordingTime, setRecordingTime] = useState(new Date());
   const [recordingPerson, setRecordingPerson] = useState("");
   const [formRecordingPersonError, setFormRecordingPersonError] = useState("");
   const [recordingPlace, setRecordingPlace] = useState("");
@@ -46,13 +54,13 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     [] as { file: File | string; title: string }[]
   );
   const [formImagesError, setFormImagesError] = useState("");
-  const [formImageTitleError, setFormImageTitleError] = useState("");
+  const [formImageTitleError] = useState("");
   const [description, setDescription] = useState([
     { key: "", value: "" },
   ] as DescriptionField[]);
   const [formDescriptionError, setFormDescriptionError] = useState("");
 
-  const { token } = useContext(UserContext);
+  const { token, userData } = useContext(UserContext);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png",
@@ -74,15 +82,15 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     setImages(newImages);
   };
 
-  const activityFormValidate = () => {
+  const validate = () => {
     let isValid = true;
     const INVALID = "không được để trống";
     if (name === "") {
-      setFormNameError("Tên" + INVALID);
+      setFormNameError("Tên " + INVALID);
       isValid = false;
     }
-    if (recordingTime === "") {
-      setFormRecordingTimeError("Thời gian " + INVALID);
+    if (notes === "") {
+      setFormNotesError("Ghi chú " + INVALID);
       isValid = false;
     }
     if (recordingPlace === "") {
@@ -93,28 +101,24 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
       setFormRecordingPersonError("Người cấp " + INVALID);
       isValid = false;
     }
-    if (notes === "") {
-      setFormNotesError("Ghi chú " + INVALID);
-      isValid = false;
-    }
     if (status === "") {
       setFormStatusError("Trạng thái " + INVALID);
       isValid = false;
     }
-    if (images.length === 0) {
-      setFormImagesError("Phải tải lên hình ảnh");
-      isValid = false;
-    }
-    if (images.length > 0) {
-      images.forEach((file) => {
-        if (file.title === "") {
-          setFormImageTitleError("Tiêu đề ảnh " + INVALID);
-          isValid = false;
-        }
-      });
-    }
+    // if (images.length === 0) {
+    //   setFormImagesError("Phải tải lên hình ảnh");
+    //   isValid = false;
+    // }
+    // if (images.length > 0) {
+    //   images.forEach((file) => {
+    //     if (file.title === "") {
+    //       setFormImageTitleError("Tiêu đề ảnh " + INVALID);
+    //       isValid = false;
+    //     }
+    //   });
+    // }
     description.forEach((des) => {
-      if (des.key === "" || des.value) {
+      if (des.key === "" || !des.value) {
         setFormDescriptionError(INVALID);
         isValid = false;
       }
@@ -122,15 +126,62 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     return isValid;
   };
 
-  const filesUploadHandler = () => {
-    console.log(images[0].file);
-    console.log(URL.createObjectURL(images[0].file));
-  };
+  // const filesUploadHandler = () => {
+  //   console.log(images[0].file);
+  //   console.log(URL.createObjectURL(images[0].file));
+  // };
 
-  const submitHandler = () => {
-    const isValid = activityFormValidate();
+  const submitHandler = async () => {
+    const isValid = validate();
     if (!isValid) return;
-    filesUploadHandler();
+    // filesUploadHandler();
+    const docDetail = await getDocById({ docId, token });
+    const activityForm = {
+      docId: docDetail.blockchainId,
+      name,
+      recordingTime: recordingTime.toUTCString(),
+      recordingPerson,
+      recordingPlace,
+      status: {
+        name: status,
+        backgroundColor: statusBackground,
+      },
+      // TODO: integrate upload API
+      images: [],
+      note: notes,
+      description: description,
+    };
+
+    setCreating(true);
+    try {
+      const { rawTx, sessionKey } = await getActivityRawTX({
+        token,
+        activityForm,
+      });
+      const decryptedPrivateKey = symDecrypt(
+        userData.privateEncrypted,
+        getClientPassphrase(userData._id)
+      );
+      const signedTx = getSignedTx(rawTx, decryptedPrivateKey);
+      await sendSignedActivityTX({ token, sessionKey, signedTx });
+      setCreating(false);
+      toggle();
+      Swal.fire({
+        title: "Thành công",
+        text: "Hoạt động mới đã được thêm.",
+        type: "success",
+        confirmButtonText: "OK",
+      }).then(() => window.location.reload());
+    } catch (error) {
+      setCreating(false);
+      Swal.fire({
+        title: "Oops",
+        text: "Có lỗi xảy ra. Vui lòng thử lại sau.",
+        type: "error",
+        confirmButtonText: "OK",
+      });
+      console.error(error);
+    }
   };
 
   return (
@@ -139,133 +190,37 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         <b>Thêm hoạt động</b>
       </ModalHeader>
       <ModalBody>
-        {/* <Row>
-          <Col>
-
-          </Col>
-        </Row> */}
         <Row>
-          {/* name */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Nội dung
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="text"
-              name="name"
-              value={name}
-              invalid={name === "" && formNameError !== ""}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <FormFeedback>{formNameError}</FormFeedback>
-          </Col>
-
-          {/* recordingTime */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Thời gian
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="text"
-              name="recordingTime"
-              value={recordingTime}
-              invalid={recordingTime === "" && formRecordingTimeError !== ""}
-              onChange={(e) => setRecordingTime(e.target.value)}
-            />
-            <FormFeedback>{formRecordingTimeError}</FormFeedback>
-          </Col>
+          <ActivityName
+            name={name}
+            formNameError={formNameError}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <ActivityTime
+            recordingTime={recordingTime}
+            onChange={(newDate) => newDate && setRecordingTime(newDate)}
+          />
         </Row>
 
         <Row className="mt-4">
-          {/* recordingPerson */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Người Cấp
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="text"
-              name="recordingPerson"
-              value={recordingPerson}
-              invalid={
-                recordingPerson === "" && formRecordingPersonError !== ""
-              }
-              onChange={(e) => setRecordingPerson(e.target.value)}
-            />
-            <FormFeedback>{formRecordingPersonError}</FormFeedback>
-          </Col>
-
-          {/* recordingPlace */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Nơi cấp
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="text"
-              name="recordingPlace"
-              value={recordingPlace}
-              invalid={recordingPlace === "" && formRecordingPlaceError !== ""}
-              onChange={(e) => setRecordingPlace(e.target.value)}
-            />
-            <FormFeedback>{formRecordingPlaceError}</FormFeedback>
-          </Col>
+          <ActivityRecordingPerson
+            recordingPerson={recordingPerson}
+            formRecordingPersonError={formRecordingPersonError}
+            onChange={(e) => setRecordingPerson(e.target.value)}
+          />
+          <ActivityRecordingPlace
+            recordingPlace={recordingPlace}
+            formRecordingPlaceError={formRecordingPlaceError}
+            onChange={(e) => setRecordingPlace(e.target.value)}
+          />
         </Row>
         <Row className="mt-4">
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Ghi chú
-          </Col>
-          <Col
-            xs="12"
-            lg="10"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="textarea"
-              rows="3"
-              name="notes"
-              value={notes}
-              invalid={notes === "" && formNotesError !== ""}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-            <FormFeedback>{formNotesError}</FormFeedback>
-          </Col>
+          <ActivityNote
+            formNotesError={formNotesError}
+            notes={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
         </Row>
-        {/* Status section */}
         <Row className="mt-5">
           <Col
             className="d-flex justify-content-lg-end align-items-center"
@@ -279,48 +234,15 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         <div className="divider" />
 
         <Row className="mt-4">
-          {/* recordingPerson */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Trạng thái
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center flex-column"
-          >
-            <Input
-              type="text"
-              name="status"
-              value={status}
-              invalid={status === "" && formStatusError !== ""}
-              onChange={(e) => setStatus(e.target.value)}
-            />
-            <FormFeedback>{formStatusError}</FormFeedback>
-          </Col>
-          {/* recordingPlace */}
-          <Col
-            xs="12"
-            lg="2"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            Màu nền
-          </Col>
-          <Col
-            xs="12"
-            lg="4"
-            className="d-flex justify-content-lg-end align-items-center"
-          >
-            <Input
-              type="color"
-              name="statusBackground"
-              value={statusBackground}
-              onChange={(e) => setStatusBackground(e.target.value)}
-            />
-          </Col>
+          <ActivityStatus
+            status={status}
+            formStatusError={formStatusError}
+            onChange={(e) => setStatus(e.target.value)}
+          />
+          <ActivityStatusBackground
+            statusBackground={statusBackground}
+            onChange={(e) => setStatusBackground(e.target.value)}
+          />
         </Row>
 
         {/* Images section */}
@@ -417,11 +339,19 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         </Row>
       </ModalBody>
       <ModalFooter className="d-flex justify-content-end">
-        <Button color="danger" onClick={toggle}>
+        <Button color="danger" onClick={toggle} disabled={creating}>
           Hủy
         </Button>{" "}
-        <Button color="primary" onClick={submitHandler}>
-          Tạo
+        <Button color="primary" onClick={submitHandler} disabled={creating}>
+          {creating ? (
+            <span
+              className="btn-wrapper--icon spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+          ) : (
+            "Tạo"
+          )}
         </Button>
       </ModalFooter>
     </>

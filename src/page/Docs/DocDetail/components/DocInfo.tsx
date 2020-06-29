@@ -6,8 +6,10 @@ import { getDocById } from "../../../../services/api/doc";
 import { getFormDetail } from "../../../../services/api/form";
 import { Row, Col, Input } from "reactstrap";
 import { getFormattedDate } from "../../../../utils/date";
+import { useParams } from "react-router";
 
-const DocInfo = ({ docId }: { docId: string }) => {
+const DocInfo = () => {
+  const { docId } = useParams();
   const { token } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [docInfo, setDocInfo] = useState({} as DocDetail);
@@ -23,7 +25,7 @@ const DocInfo = ({ docId }: { docId: string }) => {
         }
       );
     });
-  }, [docId]);
+  }, [docId, token]);
   return (
     <>
       {loading ? (
