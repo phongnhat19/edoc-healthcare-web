@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Collapse } from "reactstrap";
 import "./style.css";
 
-import { ChevronRight, BookOpen, File, Users, List, Grid } from "react-feather";
+import { ChevronRight, BookOpen, File, Users, Grid } from "react-feather";
 
 const SidebarMenu = () => {
   const { setOpen: toggleSidebarMobile } = useContext(SidebarContext);
@@ -15,7 +15,6 @@ const SidebarMenu = () => {
   const [docTypeOpen, setDocTypeOpen] = useState(false);
   const [docListOpen, setDocListOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
 
   return (
     <>
@@ -127,38 +126,6 @@ const SidebarMenu = () => {
                   <li>
                     <NavLink onClick={toggleSidebarMobile} to="/users/roles">
                       Roles
-                    </NavLink>
-                  </li>
-                </ul>
-              </Collapse>
-            </li>
-            <li>
-              <a
-                href="#history"
-                onClick={() => setHistoryOpen(!historyOpen)}
-                className={clsx({ active: historyOpen }, "menu-item")}
-              >
-                <span className="sidebar-icon">
-                  <List />
-                </span>
-                <span className="sidebar-item-label">Lịch sử hoạt động</span>
-                <span className="sidebar-icon-indicator">
-                  <ChevronRight />
-                </span>
-              </a>
-              <Collapse isOpen={historyOpen}>
-                <ul>
-                  <li>
-                    <NavLink
-                      onClick={toggleSidebarMobile}
-                      to="/history/documents"
-                    >
-                      Hồ sơ
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink onClick={toggleSidebarMobile} to="/history/users">
-                      Nhân viên
                     </NavLink>
                   </li>
                 </ul>

@@ -75,7 +75,6 @@ interface ImageField {
 }
 
 interface StatusField {
-  statusID: string;
   name: string;
   backgroundColor: string;
 }
@@ -91,6 +90,6 @@ interface NewActivityForm {
   recordingPlace: string;
   status: StatusField;
   images: ImageField[];
-  notes: string;
+  note: string;
   description: DescriptionField[];
 }
