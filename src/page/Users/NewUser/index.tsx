@@ -275,6 +275,7 @@ const NewUserPage = () => {
               size="sm"
               color="danger"
               className="py-2 px-4 mr-3"
+              disabled={isCreating}
               onClick={() => window.history.back()}
             >
               Hủy
