@@ -16,20 +16,9 @@ import { signUpForStaff } from "../../../services/api/user";
 import { UserContext } from "../../../App";
 
 const ROLES = [
-  { id: "0", name: "admin" },
-  { id: "1", name: "organization" },
-  { id: "2", name: "staff" },
-  { id: "3", name: "personal user" },
+  "admin", "organization", "staff", "personal user"
 ];
-const STAFF_ROLE_ID = "2";
-
-const userEOA = generateEOA();
-const bcAddress = userEOA.address;
-const { privateKey } = userEOA;
-const clientPassphrase = "my_password_hash"; // Currently client passphrase will be 'my_password_hash' for every user
-const privateEncrypted = symEncrypt(privateKey, clientPassphrase);
-
-console.log(bcAddress, privateEncrypted);
+const STAFF_ROLE = "staff";
 
 const NewUserPage = () => {
   const [name, setName] = useState("");
@@ -41,8 +30,9 @@ const NewUserPage = () => {
   const [gender, setGender] = useState("0");
   const [yearOfBirth, setYearOfBirth] = useState("1945");
   const [formError, setFormError] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  const {token} = useContext(UserContext);
+  const { token } = useContext(UserContext);
 
   const createYearRange = () => {
     const START = 1945;
@@ -66,7 +56,7 @@ const NewUserPage = () => {
   const checkValidation = (): boolean => {
     let isValid = true;
     if (name === "") isValid = setError();
-    if (userName === "" && role.id === STAFF_ROLE_ID) isValid = setError();
+    if (userName === "" && role === STAFF_ROLE) isValid = setError();
     if (email === "") isValid = setError();
     if (password === "") isValid = setError();
     if (address === "") isValid = setError();
@@ -74,23 +64,34 @@ const NewUserPage = () => {
     return isValid;
   };
 
-  const submitHandle = async () => {
+  const submitForStaffUser = () => {
+    const userEOA = generateEOA();
+    const bcAddress = userEOA.address;
+    const { privateKey } = userEOA;
+    const clientPassphrase = "my_password_hash"; // Currently client passphrase will be 'my_password_hash' for every user
+    const privateEncrypted = symEncrypt(privateKey, clientPassphrase);
+
+    signUpForStaff({
+      username: userName,
+      name,
+      password,
+      bcAddress,
+      privateEncrypted,
+      token,
+    }).then((response) => {
+      window.location.href = "/users/list";
+    })
+      .catch((error) => console.log(error))
+
+  }
+
+  const submitHandle = () => {
     const isValid = checkValidation();
     if (!isValid) return;
 
-    if (role.id === STAFF_ROLE_ID) {
-      signUpForStaff({
-        username: userName,
-        name,
-        password,
-        bcAddress,
-        privateEncrypted,
-        token,
-      }).then((response) => {
-        window.location.href = "/users/list";
-      })
-      .catch((error) => console.log(error))
-
+    setIsCreating(true);
+    if (role === STAFF_ROLE) {
+      submitForStaffUser();
     }
   };
 
@@ -134,22 +135,20 @@ const NewUserPage = () => {
                 <Input
                   type="select"
                   name="role"
-                  value={role.id}
-                  onChange={(e) =>
-                    setRole({ id: e.target.value, name: role.name })
-                  }
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
                 >
-                  {ROLES.map((role: any) => {
+                  {ROLES.map((_role) => {
                     return (
-                      <option value={role.id} key={role.id}>
-                        {role.name}
+                      <option value={_role} key={_role}>
+                        {_role}
                       </option>
                     );
                   })}
                 </Input>
               </Col>
             </Row>
-            {role.id === STAFF_ROLE_ID && (
+            {role === STAFF_ROLE && (
               <Row className="justify-content-center mt-4">
                 <Col
                   xs="12"
@@ -284,9 +283,18 @@ const NewUserPage = () => {
               size="sm"
               className="py-2 px-4"
               color="primary"
+              disabled={isCreating}
               onClick={submitHandle}
             >
-              Tạo
+              {isCreating ? (
+                <span
+                  className="btn-wrapper--icon spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              ) :
+                "Tạo"
+              }
             </Button>
           </CardFooter>
         </Card>
