@@ -108,4 +108,36 @@ const updateProfile = async ({
     });
 };
 
-export { login, getAllUsers, updateProfile };
+const signUpForStaff = ({
+  username,
+  name,
+  password,
+  privateEncrypted,
+  bcAddress,
+  token
+}: {
+  username: string;
+  name: string;
+  password: string;
+  privateEncrypted: string;
+  bcAddress: string;
+  token: string
+}) => {
+  return axios
+    .post(`${API_ENDPOINT}/users/sign-up/staffs`, {
+      username,
+      name,
+      password,
+      privateEncrypted,
+      bcAddress,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export { login, getAllUsers, updateProfile, signUpForStaff };
