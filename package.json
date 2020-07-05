@@ -89,7 +89,8 @@
     "react-trend": "^1.2.5",
     "reactstrap": "^8.4.1",
     "sweetalert2-react": "^0.8.3",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.3",
+    "unique-names-generator": "^4.3.0"
   },
   "devDependencies": {
     "@types/ethjs-util": "^0.1.0",

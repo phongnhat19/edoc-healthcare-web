@@ -10,21 +10,33 @@ import {
   Col,
   FormFeedback,
 } from "reactstrap";
+import {
+  uniqueNamesGenerator,
+  colors,
+  countries,
+  adjectives,
+  animals,
+  Config,
+} from "unique-names-generator";
 
 import { generateEOA, symEncrypt } from "../../../utils/blockchain";
-import { signUpForStaff } from "../../../services/api/user";
+import { signUpForStaff, signUp } from "../../../services/api/user";
 import { UserContext } from "../../../App";
+import { RECAPTCHA_SITE_KEY } from "../../../services/api/constant";
+import { getErrorMessage } from "../../../services/api/error/index";
 
-const ROLES = [
-  "admin", "organization", "staff", "personal user"
-];
+const ROLES = ["admin", "organization", "staff", "personal user"];
 const STAFF_ROLE = "staff";
+const ADMIN_ROLE = "admin";
+const ORG_ROLE = "organization";
+declare var grecaptcha: any;
 
 const NewUserPage = () => {
   const [name, setName] = useState("");
-  const [role, setRole] = useState(ROLES[0]);
+  const [role, setRole] = useState(ADMIN_ROLE);
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailExist, setEmailExist] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [gender, setGender] = useState("0");
@@ -64,35 +76,98 @@ const NewUserPage = () => {
     return isValid;
   };
 
-  const submitForStaffUser = () => {
+  /** Generate info from blockchain util */
+  const generateInfo = (): {
+    bcAddress: string;
+    privateEncrypted: string;
+    clientPassphrase: string;
+  } => {
     const userEOA = generateEOA();
     const bcAddress = userEOA.address;
     const { privateKey } = userEOA;
     const clientPassphrase = "my_password_hash"; // Currently client passphrase will be 'my_password_hash' for every user
     const privateEncrypted = symEncrypt(privateKey, clientPassphrase);
+    return { bcAddress, privateEncrypted, clientPassphrase };
+  };
 
+  const submitForStaffUser = () => {
+    const { bcAddress, privateEncrypted, clientPassphrase } = generateInfo();
     signUpForStaff({
       username: userName,
       name,
-      password,
+      password: clientPassphrase,
       bcAddress,
       privateEncrypted,
       token,
-    }).then((response) => {
-      window.location.href = "/users/list";
     })
-      .catch((error) => console.log(error))
+      .then((response) => {
+        window.location.href = "/users/list";
+      })
+      .catch(({ response }) => {
+        setIsCreating(false);
+        setEmailExist(getErrorMessage(response.data.error.message, "vi"));
+      });
+  };
 
-  }
+  /** Generate a string of 12 random words */
+  const wordGenerator = (): string => {
+    const config: Config = {
+      dictionaries: [adjectives, colors, animals, countries],
+      length: 4,
+      separator: "",
+      style: "capital",
+    };
+    return (
+      uniqueNamesGenerator(config) +
+      uniqueNamesGenerator(config) +
+      uniqueNamesGenerator(config)
+    );
+  };
 
-  const submitHandle = () => {
-    const isValid = checkValidation();
-    if (!isValid) return;
+  const submitForAdminOrOrg = async () => {
+    const { bcAddress, privateEncrypted, clientPassphrase } = generateInfo();
+    const recaptchaToken = await getRecaptchaKey();
+    const seedEncrypted = symEncrypt(wordGenerator(), clientPassphrase);
 
+    signUp({
+      name,
+      email,
+      password: clientPassphrase,
+      privateEncrypted,
+      bcAddress,
+      recaptchaToken,
+      seedEncrypted,
+    })
+      .then((res) => {
+        window.location.href = "/users/list";
+      })
+      .catch(({ response }) => {
+        setIsCreating(false);
+        setEmailExist(getErrorMessage(response.data.error.message, "vi"));
+      });
+  };
+
+  const submitHandler = async (e: any) => {
     setIsCreating(true);
-    if (role === STAFF_ROLE) {
-      submitForStaffUser();
+    const isValid = checkValidation();
+    if (!isValid) {
+      setIsCreating(false);
+      return;
     }
+
+    setFormError("");
+    if (role === STAFF_ROLE) {
+      await submitForStaffUser();
+    } else if (role === ADMIN_ROLE || role === ORG_ROLE) {
+      await submitForAdminOrOrg();
+    }
+  };
+
+  const getRecaptchaKey = async () => {
+    const responseToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {
+      action: "submit",
+    });
+    return responseToken;
   };
 
   return (
@@ -101,7 +176,9 @@ const NewUserPage = () => {
         <Card>
           <CardHeader>
             <div className="card-header--title">
-              <b className="d-block text-uppercase mt-1">Tạo nhân viên mới</b>
+              <b className="d-block text-uppercase mt-1">
+                Tạo nhân viên mới
+              </b>
             </div>
           </CardHeader>
           <div className="divider" />
@@ -182,10 +259,11 @@ const NewUserPage = () => {
                   type="email"
                   name="email"
                   value={email}
-                  invalid={formError !== "" && email === ""}
+                  invalid={formError !== "" && email === "" || emailExist !== ""}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <FormFeedback>{formError}</FormFeedback>
+                <FormFeedback>{emailExist}</FormFeedback>
               </Col>
               <Col
                 xs="12"
@@ -285,7 +363,7 @@ const NewUserPage = () => {
               className="py-2 px-4"
               color="primary"
               disabled={isCreating}
-              onClick={submitHandle}
+              onClick={submitHandler}
             >
               {isCreating ? (
                 <span
@@ -293,9 +371,9 @@ const NewUserPage = () => {
                   role="status"
                   aria-hidden="true"
                 />
-              ) :
+              ) : (
                 "Tạo"
-              }
+              )}
             </Button>
           </CardFooter>
         </Card>

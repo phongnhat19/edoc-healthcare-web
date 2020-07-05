@@ -114,30 +114,63 @@ const signUpForStaff = ({
   password,
   privateEncrypted,
   bcAddress,
-  token
+  token,
 }: {
   username: string;
   name: string;
   password: string;
   privateEncrypted: string;
   bcAddress: string;
-  token: string
+  token: string;
 }) => {
   return axios
-    .post(`${API_ENDPOINT}/users/sign-up/staffs`, {
-      username,
-      name,
-      password,
-      privateEncrypted,
-      bcAddress,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    .post(
+      `${API_ENDPOINT}/users/sign-up/staffs`,
+      {
+        username,
+        name,
+        password,
+        privateEncrypted,
+        bcAddress,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    })
+    )
     .then((response) => {
       return response.data;
     });
 };
 
-export { login, getAllUsers, updateProfile, signUpForStaff };
+const signUp = async ({
+  name,
+  email,
+  password,
+  recaptchaToken,
+  bcAddress,
+  privateEncrypted,
+  seedEncrypted,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  recaptchaToken: string;
+  bcAddress: string;
+  privateEncrypted: string;
+  seedEncrypted: string;
+}) => {
+  return axios
+    .post(`${API_ENDPOINT}/users/sign-up`, {
+      name,
+      email,
+      password,
+      recaptchaToken,
+      bcAddress,
+      privateEncrypted,
+      seedEncrypted,
+    })
+};
+
+export { login, getAllUsers, updateProfile, signUpForStaff, signUp };
