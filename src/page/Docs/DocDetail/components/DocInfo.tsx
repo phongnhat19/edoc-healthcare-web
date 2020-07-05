@@ -1,31 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 
 import { ClipLoader } from "react-spinners";
-import { UserContext } from "../../../../App";
-import { getDocById } from "../../../../services/api/doc";
-import { getFormDetail } from "../../../../services/api/form";
 import { Row, Col, Input } from "reactstrap";
 import { getFormattedDate } from "../../../../utils/date";
-import { useParams } from "react-router";
 
-const DocInfo = () => {
-  const { docId } = useParams();
-  const { token } = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
-  const [docInfo, setDocInfo] = useState({} as DocDetail);
-  const [docModelDetail, setDocModelDetail] = useState({} as any);
-
-  useEffect(() => {
-    getDocById({ token, docId }).then((docRes) => {
-      setDocInfo(docRes);
-      getFormDetail({ token, formID: docRes.docModel._id }).then(
-        (docModelRes) => {
-          setDocModelDetail(docModelRes);
-          setLoading(false);
-        }
-      );
-    });
-  }, [docId, token]);
+const DocInfo = ({
+  loading,
+  docInfo,
+  docModelDetail,
+}: {
+  loading: boolean;
+  docInfo: DocDetail;
+  docModelDetail: any;
+}) => {
   return (
     <>
       {loading ? (

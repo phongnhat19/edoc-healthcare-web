@@ -53,6 +53,11 @@ interface Form {
   grantedFor: string[];
 }
 
+interface DocOwner {
+  _id: string;
+  name: string;
+}
+
 // Doc type definition
 interface Doc {
   _id: string;

@@ -12,12 +12,14 @@ import {
   TabContent,
   TabPane,
   NavLink as NavLinkStrap,
+  Table,
 } from "reactstrap";
 import { getFormattedDate } from "../../../utils/date";
 import { UserContext } from "../../../App";
 import { getFormDetail } from "../../../services/api/form";
 import clsx from "clsx";
 import "./style.css";
+import { Link } from "react-router-dom";
 
 const FormDetail = () => {
   const { formId: formID } = useParams();
@@ -36,10 +38,35 @@ const FormDetail = () => {
 
   const renderFormField = () => {
     return (
-      <div>
-        {formData!.inputFields.map((field) => {
-          return <div key={`field-${field.name}`}>{field.label}</div>;
-        })}
+      <div className="table-responsive-md">
+        <Table className="text-nowrap mb-0">
+          <thead className="thead-light">
+            <tr>
+              <th>Tên field</th>
+              <th>Loại</th>
+              <th>Mã</th>
+              <th>Option</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white">
+            {formData?.inputFields.map((field, fieldIndex) => {
+              return (
+                <tr key={`field-${fieldIndex}`}>
+                  <td>{field.label}</td>
+                  <td>
+                    <div className="align-box-row">{field.type}</div>
+                  </td>
+                  <td>
+                    <div className="align-box-row">{field.name}</div>
+                  </td>
+                  <td>
+                    <b>{field.options ? field.options.join(",") : ""}</b>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
       </div>
     );
   };
@@ -50,7 +77,9 @@ const FormDetail = () => {
         <Card>
           <CardHeader>
             <div className="card-header--title">
-              <b className="d-block text-uppercase mt-1">Thông tin chi tiết</b>
+              <b className="d-block text-uppercase mt-1">
+                <Link to="/forms/list">Danh sách mẫu</Link> / {formData?.name}
+              </b>
             </div>
           </CardHeader>
           <div className="divider" />
