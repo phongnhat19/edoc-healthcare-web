@@ -59,7 +59,19 @@ const getFormDetail = ({
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((response) => response.data as Form);
+    .then((response) => {
+      return {
+        _id: response.data._id,
+        name: response.data.name,
+        symbol: response.data.symbol,
+        blockchainId: response.data.blockchainId,
+        dateCreated: new Date(response.data.createdAt),
+        organization: response.data.organization,
+        modelUI: response.data.modelUI,
+        inputFields: response.data.inputFields,
+        grantedFor: response.data.grantedFor,
+      } as Form;
+    });
 };
 
 const grantFormAccess = ({

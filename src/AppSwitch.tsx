@@ -4,6 +4,7 @@ import DashboardPage from "./page/Dashboard";
 import ProfilePage from "./page/Profile";
 import FormListPage from "./page/Forms/FormList";
 import CreateFormPage from "./page/Forms/CreateForm";
+import FormDetailPage from "./page/Forms/FormDetail";
 import DocListPage from "./page/Docs/DocList";
 import UserListPage from "./page/Users/UserList";
 import NewDocForm from "./page/Docs/NewDoc";
@@ -15,6 +16,7 @@ function AppSwitch() {
     <Switch>
       <Route path="/forms/list" component={FormListPage} />
       <Route path="/forms/create" component={CreateFormPage} />
+      <Route path="/forms/detail/:formId" component={FormDetailPage} />
       <Route path="/documents/detail/:docId" component={DocDetailPage} />
       <Route path="/documents/list" component={DocListPage} />
       <Route path="/documents/create" component={NewDocForm} />

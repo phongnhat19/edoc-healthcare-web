@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -9,16 +9,40 @@ import {
   Row,
   TabContent,
   TabPane,
+  CardHeader,
 } from "reactstrap";
 import clsx from "clsx";
 import DocInfo from "./components/DocInfo";
 import DocActivity from "./components/DocActivity";
+import { useParams } from "react-router";
+import { UserContext } from "../../../App";
+import { getDocById } from "../../../services/api/doc";
+import { getFormDetail } from "../../../services/api/form";
+import { Link } from "react-router-dom";
 
 const DocDetailPage = () => {
+  const { docId } = useParams();
+  const { token } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+  const [docInfo, setDocInfo] = useState({} as DocDetail);
+  const [docModelDetail, setDocModelDetail] = useState({} as any);
+
   const [activeTab, setActiveTab] = useState("information");
   const toggle = (tab: any) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
+
+  useEffect(() => {
+    getDocById({ token, docId }).then((docRes) => {
+      setDocInfo(docRes);
+      getFormDetail({ token, formID: docRes.docModel._id }).then(
+        (docModelRes) => {
+          setDocModelDetail(docModelRes);
+          setLoading(false);
+        }
+      );
+    });
+  }, [docId, token]);
 
   return (
     <div className="app-inner-content-layout">
@@ -26,6 +50,14 @@ const DocDetailPage = () => {
         <Row>
           <Col>
             <Card>
+              <CardHeader>
+                <div className="card-header--title">
+                  <b className="d-block text-uppercase mt-1">
+                    <Link to="/documents/list">Danh sách hồ sơ</Link> /{" "}
+                    {docInfo.name}
+                  </b>
+                </div>
+              </CardHeader>
               <CardBody>
                 <Row>
                   <Col span={12}>
@@ -61,7 +93,11 @@ const DocDetailPage = () => {
                       <TabPane tabId="information">
                         <Row>
                           <Col sm="12">
-                            <DocInfo />
+                            <DocInfo
+                              loading={loading}
+                              docInfo={docInfo}
+                              docModelDetail={docModelDetail}
+                            />
                           </Col>
                         </Row>
                       </TabPane>
