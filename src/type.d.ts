@@ -46,7 +46,6 @@ interface Form {
   name: string;
   symbol: string;
   blockchainId: string;
-  address: string;
   dateCreated: Date;
   organization: Organization;
   modelUI: string;
