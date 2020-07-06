@@ -18,6 +18,7 @@ import {
   animals,
   Config,
 } from "unique-names-generator";
+import {load} from "recaptcha-v3";
 
 import { generateEOA, symEncrypt } from "../../../utils/blockchain";
 import { signUpForStaff, signUp } from "../../../services/api/user";
@@ -29,7 +30,6 @@ const ROLES = ["admin", "organization", "staff", "personal user"];
 const STAFF_ROLE = "staff";
 const ADMIN_ROLE = "admin";
 const ORG_ROLE = "organization";
-declare var grecaptcha: any;
 
 const NewUserPage = () => {
   const [name, setName] = useState("");
@@ -164,10 +164,9 @@ const NewUserPage = () => {
   };
 
   const getRecaptchaKey = async () => {
-    const responseToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {
-      action: "submit",
-    });
-    return responseToken;
+    const responseToken = await load(RECAPTCHA_SITE_KEY);
+    const token = await responseToken.execute('signup');
+    return token;
   };
 
   return (
