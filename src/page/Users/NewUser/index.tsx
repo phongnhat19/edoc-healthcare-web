@@ -18,7 +18,7 @@ import {
   animals,
   Config,
 } from "unique-names-generator";
-import {load} from "recaptcha-v3";
+import { load } from "recaptcha-v3";
 
 import { generateEOA, symEncrypt } from "../../../utils/blockchain";
 import { signUpForStaff, signUp } from "../../../services/api/user";
@@ -30,7 +30,6 @@ const ROLES = ["admin", "organization", "staff", "personal user"];
 const STAFF_ROLE = "staff";
 const ADMIN_ROLE = "admin";
 const ORG_ROLE = "organization";
-
 
 const createYearRange = () => {
   const START = 1945;
@@ -166,7 +165,7 @@ const NewUserPage = () => {
 
   const getRecaptchaKey = async () => {
     const responseToken = await load(RECAPTCHA_SITE_KEY);
-    const token = await responseToken.execute('signup');
+    const token = await responseToken.execute("signup");
     return token;
   };
 
@@ -176,9 +175,7 @@ const NewUserPage = () => {
         <Card>
           <CardHeader>
             <div className="card-header--title">
-              <b className="d-block text-uppercase mt-1">
-                Tạo nhân viên mới
-              </b>
+              <b className="d-block text-uppercase mt-1">Tạo nhân viên mới</b>
             </div>
           </CardHeader>
           <div className="divider" />
@@ -259,7 +256,9 @@ const NewUserPage = () => {
                   type="email"
                   name="email"
                   value={email}
-                  invalid={formError !== "" && email === "" || emailExist !== ""}
+                  invalid={
+                    (formError !== "" && email === "") || emailExist !== ""
+                  }
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <FormFeedback>{formError}</FormFeedback>
