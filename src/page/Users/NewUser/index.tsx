@@ -132,7 +132,7 @@ const NewUserPage = () => {
     signUp({
       name,
       email,
-      password: clientPassphrase,
+      password,
       privateEncrypted,
       bcAddress,
       recaptchaToken,
