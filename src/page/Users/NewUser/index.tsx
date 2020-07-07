@@ -100,7 +100,7 @@ const NewUserPage = () => {
       privateEncrypted,
       token,
     })
-      .then((response) => {
+      .then(() => {
         window.location.href = "/users/list";
       })
       .catch(({ response }) => {
@@ -138,7 +138,7 @@ const NewUserPage = () => {
       recaptchaToken,
       seedEncrypted,
     })
-      .then((res) => {
+      .then(() => {
         window.location.href = "/users/list";
       })
       .catch(({ response }) => {
@@ -147,7 +147,7 @@ const NewUserPage = () => {
       });
   };
 
-  const submitHandler = async (e: any) => {
+  const submitHandler = async () => {
     setIsCreating(true);
     const isValid = checkValidation();
     if (!isValid) {
