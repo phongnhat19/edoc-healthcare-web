@@ -31,6 +31,21 @@ const STAFF_ROLE = "staff";
 const ADMIN_ROLE = "admin";
 const ORG_ROLE = "organization";
 
+
+const createYearRange = () => {
+  const START = 1945;
+  const END = 2020;
+  let yearRange: any[] = [];
+  for (let i = START; i < END; i++) {
+    yearRange.push(
+      <option value={i} key={i}>
+        {i}
+      </option>
+    );
+  }
+  return yearRange;
+};
+
 const NewUserPage = () => {
   const [name, setName] = useState("");
   const [role, setRole] = useState(ADMIN_ROLE);
@@ -45,20 +60,6 @@ const NewUserPage = () => {
   const [isCreating, setIsCreating] = useState(false);
 
   const { token } = useContext(UserContext);
-
-  const createYearRange = () => {
-    const START = 1945;
-    const END = 2020;
-    let yearRange: any[] = [];
-    for (let i = START; i < END; i++) {
-      yearRange.push(
-        <option value={i} key={i}>
-          {i}
-        </option>
-      );
-    }
-    return yearRange;
-  };
 
   const setError = () => {
     setFormError("Không được để trống");
