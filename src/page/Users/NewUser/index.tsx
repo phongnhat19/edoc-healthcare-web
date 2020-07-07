@@ -114,12 +114,14 @@ const NewUserPage = () => {
     const config: Config = {
       dictionaries: [adjectives, colors, animals, countries],
       length: 4,
-      separator: "",
-      style: "capital",
+      separator: " ",
+      style: "lowerCase",
     };
     return (
       uniqueNamesGenerator(config) +
+      " " +
       uniqueNamesGenerator(config) +
+      " " +
       uniqueNamesGenerator(config)
     );
   };
