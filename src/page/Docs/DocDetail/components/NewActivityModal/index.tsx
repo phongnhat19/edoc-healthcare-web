@@ -55,10 +55,22 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   );
   const [formImagesError, setFormImagesError] = useState("");
   const [formImageTitleError] = useState("");
-  const [description, setDescription] = useState([
+
+  const [descriptions, setDescriptions] = useState([
     { key: "", value: "" },
   ] as DescriptionField[]);
   const [formDescriptionError, setFormDescriptionError] = useState("");
+
+  const addDescription = () => {
+    const newDescriptions = [...descriptions, { key: "", value: "" }];
+    setDescriptions(newDescriptions);
+  };
+
+  const removeDescription = (index: number) => {
+    if (descriptions.length === 1) return;
+    const newDescriptions = descriptions.filter((des, idx) => idx !== index);
+    setDescriptions(newDescriptions);
+  };
 
   const { token, userData } = useContext(UserContext);
 
@@ -117,7 +129,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     //     }
     //   });
     // }
-    description.forEach((des) => {
+    descriptions.forEach((des) => {
       if (des.key === "" || !des.value) {
         setFormDescriptionError(INVALID);
         isValid = false;
@@ -132,6 +144,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   // };
 
   const submitHandler = async () => {
+    console.table(descriptions);
     const isValid = validate();
     if (!isValid) return;
     // filesUploadHandler();
@@ -149,7 +162,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
       // TODO: integrate upload API
       images: [],
       note: notes,
-      description: description,
+      description: descriptions,
     };
 
     setCreating(true);
@@ -330,9 +343,12 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         <Row className="mt-4">
           <Col>
             <DescriptionTable
+              removeDescription={removeDescription}
+              descriptions={descriptions}
+              addDescription={addDescription}
               formDescriptionError={formDescriptionError}
-              descriptionUpdateHandler={(newDescription: DescriptionField[]) =>
-                setDescription(newDescription)
+              setDescriptions={(newDescription: DescriptionField[]) =>
+                setDescriptions(newDescription)
               }
             />
           </Col>
