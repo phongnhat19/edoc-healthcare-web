@@ -31,8 +31,7 @@ const getAllDocs = ({
           _id: docObj._id,
           name: docObj.name,
           dateCreated: new Date(docObj.createdAt),
-          ownerID: docObj.owner._id,
-          ownerName: docObj.owner.name,
+          owner: docObj.owner,
           issuedPlace: docObj.issuedPlace,
           type: docObj.type,
           status: "ACTIVE",
@@ -103,7 +102,7 @@ const getDocById = ({
         docModel: data.docModel,
         blockchainId: data.blockchainId,
         activities: data.activities,
-      };
+      } as Doc;
     });
 };
 

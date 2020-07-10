@@ -144,7 +144,6 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   // };
 
   const submitHandler = async () => {
-    console.table(descriptions);
     const isValid = validate();
     if (!isValid) return;
     // filesUploadHandler();

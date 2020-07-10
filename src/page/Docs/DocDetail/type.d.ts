@@ -11,10 +11,5 @@ interface DocDetail {
   issuer: string;
   type: string;
   docModel: DocModel;
-}
-
-interface DocModel {
-  _id: string;
-  modelUI: string;
-  inputFields: any[];
+  activities: any;
 }

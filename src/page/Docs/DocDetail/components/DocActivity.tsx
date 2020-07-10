@@ -1,24 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Button, Col, Row, Modal } from "reactstrap";
 import NewActivityModal from "./NewActivityModal";
-import { useParams } from "react-router";
-import { getDocById } from "../../../../services/api/doc";
-import { UserContext } from "../../../../App";
 import { getFormattedDate } from "../../../../utils/date";
 
-const DocActivity = () => {
+const DocActivity = ({ activityList }: { activityList: any }) => {
   const [modalOpened, setModalOpened] = useState(false);
-  const { token } = useContext(UserContext);
-  const [activityList, setActivityList] = useState([] as any[]);
-
-  const { docId } = useParams();
-
-  useEffect(() => {
-    getDocById({ docId, token }).then((docObj) =>
-      setActivityList(docObj.activities)
-    );
-  }, [docId, token]);
 
   const toggle = () => setModalOpened(!modalOpened);
 
@@ -48,7 +35,7 @@ const DocActivity = () => {
       <Row className="mt-4">
         <Col lg="4">
           <div className="timeline-list mb-5">
-            {activityList.map((activity, index) => {
+            {activityList.map((activity: any, index: number) => {
               const activityTime = new Date(activity.recordingTime);
               return (
                 <div className="timeline-item" key={`activity-${index}`}>
