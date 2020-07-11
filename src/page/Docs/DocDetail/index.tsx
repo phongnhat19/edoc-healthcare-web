@@ -26,7 +26,7 @@ const DocDetailPage = () => {
   const { docId } = useParams();
   const { token } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-  const [docInfo, setDocInfo] = useState({} as any);
+  const [docInfo, setDocInfo] = useState({} as Doc);
   const [docModelDetail, setDocModelDetail] = useState({} as any);
 
   const [activeTab, setActiveTab] = useState("information");
@@ -37,7 +37,7 @@ const DocDetailPage = () => {
   useEffect(() => {
     getDocById({ token, docId }).then((docRes) => {
       setDocInfo(docRes);
-      const formID = docRes?.docModel?._id || "";
+      const formID = docRes.docModel._id || "";
       getFormDetail({ token, formID }).then((docModelRes) => {
         setDocModelDetail(docModelRes);
         setLoading(false);
