@@ -7,7 +7,7 @@ const DocInfo = ({
   docInfo,
   docModelDetail,
 }: {
-  docInfo: DocDetail;
+  docInfo: Doc;
   docModelDetail: any;
 }) => {
   return (
@@ -48,7 +48,12 @@ const DocInfo = ({
           Ngày Cấp
         </Col>
         <Col xs="12" lg="4">
-          <Input value={getFormattedDate(docInfo.issuedTime)} disabled />
+          <Input
+            value={
+              docInfo.issuedTime ? getFormattedDate(docInfo.issuedTime) : ""
+            }
+            disabled
+          />
         </Col>
       </Row>
       <Row className="justify-content-center mt-4">
