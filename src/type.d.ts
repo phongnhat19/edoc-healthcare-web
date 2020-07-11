@@ -94,7 +94,7 @@ interface DescriptionField {
   key: string;
   value: string;
 }
-interface NewActivityForm {
+interface Activity {
   docId: string;
   name: string;
   recordingTime: string;

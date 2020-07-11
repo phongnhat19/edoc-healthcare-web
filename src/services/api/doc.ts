@@ -24,7 +24,7 @@ const getAllDocs = ({
         totalPages: response.data.totalPages,
         page: response.data.page,
         limit: response.data.limit,
-        data: [] as Array<Doc>,
+        data: [] as Doc[],
       };
       responseData.data = response.data.data.map((docObj: any) => {
         return {
@@ -185,7 +185,7 @@ const getActivityRawTX = async ({
   activityForm,
 }: {
   token: string;
-  activityForm: NewActivityForm;
+  activityForm: Activity;
 }) => {
   const response = await axios.post(
     `${API_ENDPOINT}/docs/activities/get-raw-tx`,

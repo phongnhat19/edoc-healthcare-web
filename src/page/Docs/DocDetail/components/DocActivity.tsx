@@ -35,7 +35,7 @@ const DocActivity = ({ activityList }: { activityList: any }) => {
       <Row className="mt-4">
         <Col lg="4">
           <div className="timeline-list mb-5">
-            {activityList.map((activity: any, index: number) => {
+            {activityList.map((activity: Activity, index: number) => {
               const activityTime = new Date(activity.recordingTime);
               return (
                 <div className="timeline-item" key={`activity-${index}`}>
