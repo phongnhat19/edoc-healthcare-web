@@ -24,15 +24,14 @@ const getAllDocs = ({
         totalPages: response.data.totalPages,
         page: response.data.page,
         limit: response.data.limit,
-        data: [] as Array<Doc>,
+        data: [] as Doc[],
       };
       responseData.data = response.data.data.map((docObj: any) => {
         return {
           _id: docObj._id,
           name: docObj.name,
           dateCreated: new Date(docObj.createdAt),
-          ownerID: docObj.owner._id,
-          ownerName: docObj.owner.name,
+          owner: docObj.owner,
           issuedPlace: docObj.issuedPlace,
           type: docObj.type,
           status: "ACTIVE",
@@ -103,7 +102,7 @@ const getDocById = ({
         docModel: data.docModel,
         blockchainId: data.blockchainId,
         activities: data.activities,
-      };
+      } as Doc;
     });
 };
 
@@ -186,7 +185,7 @@ const getActivityRawTX = async ({
   activityForm,
 }: {
   token: string;
-  activityForm: NewActivityForm;
+  activityForm: Activity;
 }) => {
   const response = await axios.post(
     `${API_ENDPOINT}/docs/activities/get-raw-tx`,

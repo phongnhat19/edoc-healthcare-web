@@ -12,35 +12,36 @@ import {
   CardHeader,
 } from "reactstrap";
 import clsx from "clsx";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
+
 import DocInfo from "./components/DocInfo";
 import DocActivity from "./components/DocActivity";
-import { useParams } from "react-router";
 import { UserContext } from "../../../App";
 import { getDocById } from "../../../services/api/doc";
 import { getFormDetail } from "../../../services/api/form";
-import { Link } from "react-router-dom";
 
 const DocDetailPage = () => {
   const { docId } = useParams();
   const { token } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-  const [docInfo, setDocInfo] = useState({} as DocDetail);
-  const [docModelDetail, setDocModelDetail] = useState({} as any);
+  const [docInfo, setDocInfo] = useState({} as Doc);
+  const [formDetail, setFormDetail] = useState({} as Form);
 
   const [activeTab, setActiveTab] = useState("information");
-  const toggle = (tab: any) => {
+  const toggle = (tab: string) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
   useEffect(() => {
     getDocById({ token, docId }).then((docRes) => {
       setDocInfo(docRes);
-      getFormDetail({ token, formID: docRes.docModel._id }).then(
-        (docModelRes) => {
-          setDocModelDetail(docModelRes);
-          setLoading(false);
-        }
-      );
+      const formID = docRes.docModel._id || "";
+      getFormDetail({ token, formID }).then((docModelRes) => {
+        setFormDetail(docModelRes);
+        setLoading(false);
+      });
     });
   }, [docId, token]);
 
@@ -93,18 +94,25 @@ const DocDetailPage = () => {
                       <TabPane tabId="information">
                         <Row>
                           <Col sm="12">
-                            <DocInfo
-                              loading={loading}
-                              docInfo={docInfo}
-                              docModelDetail={docModelDetail}
-                            />
+                            {loading ? (
+                              <ClipLoader />
+                            ) : (
+                              <DocInfo
+                                docInfo={docInfo}
+                                formDetail={formDetail}
+                              />
+                            )}
                           </Col>
                         </Row>
                       </TabPane>
                       <TabPane tabId="activity">
                         <Row>
                           <Col sm="12">
-                            <DocActivity />
+                            {loading ? (
+                              <ClipLoader />
+                            ) : (
+                              <DocActivity activityList={docInfo.activities} />
+                            )}
                           </Col>
                         </Row>
                       </TabPane>

@@ -59,15 +59,23 @@ interface DocOwner {
 }
 
 // Doc type definition
+
 interface Doc {
   _id: string;
+  blockchainId: string;
   name: string;
+  description?: string;
   issuedPlace: string;
   type: string;
-  ownerID: string;
-  ownerName: string;
+  uri: string;
+  owner: DocOwner;
+  issuer: DocOwner;
+  docModel: Form;
+  inputData?: FormValue[];
+  issuedTime?: Date;
   dateCreated: Date;
   status: ActivityStatus;
+  activities: any[] | [];
 }
 
 // Activity type definition
@@ -86,7 +94,7 @@ interface DescriptionField {
   key: string;
   value: string;
 }
-interface NewActivityForm {
+interface Activity {
   docId: string;
   name: string;
   recordingTime: string;

@@ -1,121 +1,112 @@
 import React from "react";
-
-import { ClipLoader } from "react-spinners";
 import { Row, Col, Input } from "reactstrap";
+
 import { getFormattedDate } from "../../../../utils/date";
 
 const DocInfo = ({
-  loading,
   docInfo,
-  docModelDetail,
+  formDetail,
 }: {
-  loading: boolean;
-  docInfo: DocDetail;
-  docModelDetail: any;
+  docInfo: Doc;
+  formDetail: Form;
 }) => {
   return (
     <>
-      {loading ? (
-        <ClipLoader />
-      ) : (
-        <>
-          <Row className="justify-content-center">
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Tên hồ sơ
-            </Col>
-            <Col xs="12" lg="10">
-              <Input type="text" name="name" value={docInfo.name} disabled />
-            </Col>
-          </Row>
-          <Row className="justify-content-center mt-4">
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Nơi cấp
-            </Col>
-            <Col xs="12" lg="4">
-              <Input
-                type="text"
-                name="issuedPlace"
-                value={docInfo.issuedPlace}
-                disabled
-              />
-            </Col>
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Ngày Cấp
-            </Col>
-            <Col xs="12" lg="4">
-              <Input value={getFormattedDate(docInfo.issuedTime)} disabled />
-            </Col>
-          </Row>
-          <Row className="justify-content-center mt-4">
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Loại
-            </Col>
-            <Col xs="12" lg="4">
-              <Input type="text" name="type" value={docInfo.type} disabled />
-            </Col>
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Mẫu
-            </Col>
-            <Col xs="12" lg="4">
-              <Input
-                type="text"
-                name="formId"
-                value={docModelDetail.name}
-                disabled
-              />
-            </Col>
-          </Row>
-          <Row className="justify-content-center mt-4">
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Mô tả
-            </Col>
-            <Col xs="12" lg="10">
-              <Input
-                type="textarea"
-                name="description"
-                value={docInfo.description}
-                disabled
-              />
-            </Col>
-          </Row>
-          <Row className="justify-content-center mt-4">
-            <Col
-              xs="12"
-              lg="2"
-              className="d-flex justify-content-lg-end align-items-center"
-            >
-              Link
-            </Col>
-            <Col xs="12" lg="10">
-              <Input type="text" name="uri" value={docInfo.uri} disabled />
-            </Col>
-          </Row>
-        </>
-      )}
+      <Row className="justify-content-center">
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Tên hồ sơ
+        </Col>
+        <Col xs="12" lg="10">
+          <Input type="text" name="name" value={docInfo.name} disabled />
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-4">
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Nơi cấp
+        </Col>
+        <Col xs="12" lg="4">
+          <Input
+            type="text"
+            name="issuedPlace"
+            value={docInfo.issuedPlace}
+            disabled
+          />
+        </Col>
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Ngày Cấp
+        </Col>
+        <Col xs="12" lg="4">
+          <Input
+            value={
+              docInfo.issuedTime ? getFormattedDate(docInfo.issuedTime) : ""
+            }
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-4">
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Loại
+        </Col>
+        <Col xs="12" lg="4">
+          <Input type="text" name="type" value={docInfo.type} disabled />
+        </Col>
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Mẫu
+        </Col>
+        <Col xs="12" lg="4">
+          <Input type="text" name="formId" value={formDetail.name} disabled />
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-4">
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Mô tả
+        </Col>
+        <Col xs="12" lg="10">
+          <Input
+            type="textarea"
+            name="description"
+            value={docInfo.description}
+            disabled
+          />
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-4">
+        <Col
+          xs="12"
+          lg="2"
+          className="d-flex justify-content-lg-end align-items-center"
+        >
+          Link
+        </Col>
+        <Col xs="12" lg="10">
+          <Input type="text" name="uri" value={docInfo.uri} disabled />
+        </Col>
+      </Row>
     </>
   );
 };
