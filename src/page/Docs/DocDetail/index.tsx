@@ -27,7 +27,7 @@ const DocDetailPage = () => {
   const { token } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [docInfo, setDocInfo] = useState({} as Doc);
-  const [formDetail, setFormDetail] = useState({} as any);
+  const [formDetail, setFormDetail] = useState({} as Form);
 
   const [activeTab, setActiveTab] = useState("information");
   const toggle = (tab: string) => {
