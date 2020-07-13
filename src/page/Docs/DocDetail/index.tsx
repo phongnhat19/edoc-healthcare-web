@@ -27,10 +27,10 @@ const DocDetailPage = () => {
   const { token } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [docInfo, setDocInfo] = useState({} as Doc);
-  const [docModelDetail, setDocModelDetail] = useState({} as any);
+  const [formDetail, setFormDetail] = useState({} as any);
 
   const [activeTab, setActiveTab] = useState("information");
-  const toggle = (tab: any) => {
+  const toggle = (tab: string) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
@@ -39,7 +39,7 @@ const DocDetailPage = () => {
       setDocInfo(docRes);
       const formID = docRes.docModel._id || "";
       getFormDetail({ token, formID }).then((docModelRes) => {
-        setDocModelDetail(docModelRes);
+        setFormDetail(docModelRes);
         setLoading(false);
       });
     });
@@ -99,7 +99,7 @@ const DocDetailPage = () => {
                             ) : (
                               <DocInfo
                                 docInfo={docInfo}
-                                docModelDetail={docModelDetail}
+                                formDetail={formDetail}
                               />
                             )}
                           </Col>

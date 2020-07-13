@@ -5,10 +5,10 @@ import { getFormattedDate } from "../../../../utils/date";
 
 const DocInfo = ({
   docInfo,
-  docModelDetail,
+  formDetail,
 }: {
   docInfo: Doc;
-  docModelDetail: any;
+  formDetail: Form;
 }) => {
   return (
     <>
@@ -75,12 +75,7 @@ const DocInfo = ({
           Mẫu
         </Col>
         <Col xs="12" lg="4">
-          <Input
-            type="text"
-            name="formId"
-            value={docModelDetail.name}
-            disabled
-          />
+          <Input type="text" name="formId" value={formDetail.name} disabled />
         </Col>
       </Row>
       <Row className="justify-content-center mt-4">

@@ -4,7 +4,7 @@ import { Button, Col, Row, Modal } from "reactstrap";
 import NewActivityModal from "./NewActivityModal";
 import { getFormattedDate } from "../../../../utils/date";
 
-const DocActivity = ({ activityList }: { activityList: any }) => {
+const DocActivity = ({ activityList }: { activityList: Activity[] }) => {
   const [modalOpened, setModalOpened] = useState(false);
 
   const toggle = () => setModalOpened(!modalOpened);
