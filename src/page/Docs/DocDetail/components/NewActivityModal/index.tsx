@@ -170,8 +170,6 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
       description: descriptions,
     };
 
-    console.log(activityForm);
-
     setCreating(true);
     try {
       const { rawTx, sessionKey } = await getActivityRawTX({
