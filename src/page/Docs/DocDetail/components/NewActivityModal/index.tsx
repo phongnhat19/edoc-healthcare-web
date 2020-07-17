@@ -38,17 +38,17 @@ import {
 const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   const { docId } = useParams();
   const [creating, setCreating] = useState(false);
-  const [name, setName] = useState("Khong biet ten");
+  const [name, setName] = useState("");
   const [formNameError, setFormNameError] = useState("");
   const [recordingTime, setRecordingTime] = useState(new Date());
-  const [recordingPerson, setRecordingPerson] = useState("Hang");
+  const [recordingPerson, setRecordingPerson] = useState("");
   const [formRecordingPersonError, setFormRecordingPersonError] = useState("");
-  const [recordingPlace, setRecordingPlace] = useState("HCM");
+  const [recordingPlace, setRecordingPlace] = useState("");
   const [formRecordingPlaceError, setFormRecordingPlaceError] = useState("");
-  const [status, setStatus] = useState("het han");
+  const [status, setStatus] = useState("");
   const [formStatusError, setFormStatusError] = useState("");
   const [statusBackground, setStatusBackground] = useState("#666666");
-  const [notes, setNotes] = useState("không có ghi chú");
+  const [notes, setNotes] = useState("");
   const [formNotesError, setFormNotesError] = useState("");
   const [images, setImages] = useState(
     [] as ImageField[]
