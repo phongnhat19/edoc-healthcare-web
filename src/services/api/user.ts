@@ -8,6 +8,41 @@ const ROLE_MAPPER = {
   "3": "personal user",
 };
 
+const ORG_ROLE = "1";
+
+const USER_ROLE = {
+  ADMIN: "admin",
+  ORG: "organization",
+  STAFF: "staff",
+  NORMAL: "personal user",
+};
+
+const getAllOrg = async (token: string) => {
+  return axios
+    .get(`${API_ENDPOINT}/users`, {
+      params: { role: ORG_ROLE, limit: 100, page: 1 },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      const responseData = {
+        totalItems: response.data.totalItems,
+        totalPages: response.data.totalPages,
+        page: response.data.page,
+        limit: response.data.limit,
+        data: [] as Organization[],
+      };
+      responseData.data = response.data.data.map((userObj: any) => {
+        return {
+          _id: userObj._id,
+          name: userObj.name,
+        } as Organization;
+      });
+      return responseData;
+    });
+};
+
 const getAllUsers = async ({
   page = 1,
   limit = 10,
@@ -161,16 +196,23 @@ const signUp = async ({
   privateEncrypted: string;
   seedEncrypted: string;
 }) => {
-  return axios
-    .post(`${API_ENDPOINT}/users/sign-up`, {
-      name,
-      email,
-      password,
-      recaptchaToken,
-      bcAddress,
-      privateEncrypted,
-      seedEncrypted,
-    })
+  return axios.post(`${API_ENDPOINT}/users/sign-up`, {
+    name,
+    email,
+    password,
+    recaptchaToken,
+    bcAddress,
+    privateEncrypted,
+    seedEncrypted,
+  });
 };
 
-export { login, getAllUsers, updateProfile, signUpForStaff, signUp };
+export {
+  login,
+  getAllUsers,
+  updateProfile,
+  signUpForStaff,
+  signUp,
+  USER_ROLE,
+  getAllOrg,
+};

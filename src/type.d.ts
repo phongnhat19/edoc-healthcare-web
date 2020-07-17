@@ -12,6 +12,12 @@ interface User {
   role: string;
 }
 
+// Org type definition
+interface Organization {
+  _id: string;
+  name: string;
+}
+
 // Form type definition
 type FormFieldType = "string" | "singleChoice";
 
