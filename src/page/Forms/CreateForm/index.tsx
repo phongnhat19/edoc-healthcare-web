@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Row,
   Card,
@@ -22,6 +22,8 @@ import Creator from "./components/Creator";
 import FormName from "./components/FormName";
 import FormSymbol from "./components/FormSymbol";
 import FormTab from "./components/FormTab";
+import { USER_ROLE, getAllOrg } from "../../../services/api/user";
+import FormOrg from "./components/FormOrg";
 
 const CreateFormPage = () => {
   const [formName, setFormName] = useState("");
@@ -30,6 +32,8 @@ const CreateFormPage = () => {
   const [formSymbolError, setFormSymbolError] = useState("");
   const [modelUI, setModelUI] = useState("");
   const [loading, setLoading] = useState(false);
+  const [orgList, setOrgList] = useState([] as Organization[]);
+  const [org, setOrg] = useState("");
 
   const [formFields, setFormFields] = useState([] as TableFormField[]);
   const { userData, token } = useContext(UserContext);
@@ -51,6 +55,7 @@ const CreateFormPage = () => {
       name: formName,
       symbol: formSymbol,
       modelUI,
+      organization: org,
       inputFields: formFields.map((field) => {
         const resultObj = {
           label: field.label,
@@ -93,6 +98,17 @@ const CreateFormPage = () => {
       });
   };
 
+  useEffect(() => {
+    if (userData.role === USER_ROLE.ADMIN) {
+      getAllOrg(token)
+        .then((response) => {
+          setOrgList(response.data);
+          setOrg(response.data[0]._id);
+        })
+        .catch(console.error);
+    }
+  }, [userData.role, token]);
+
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
@@ -115,6 +131,11 @@ const CreateFormPage = () => {
                 formNameError={formNameError}
               />
             </Row>
+            {userData.role === USER_ROLE.ADMIN && (
+              <Row className="justify-content-center mt-3">
+                <FormOrg orgList={orgList} formOrg={org} setFormOrg={setOrg} />
+              </Row>
+            )}
             <Row className="justify-content-center mt-3">
               <FormSymbol
                 formSymbol={formSymbol}

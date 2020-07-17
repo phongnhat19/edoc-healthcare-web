@@ -1,37 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button, Input, Table, FormFeedback } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 const DescriptionTable = ({
-  descriptionUpdateHandler,
+  descriptions,
   formDescriptionError,
+  removeDescription,
+  addDescription,
+  setDescriptions,
 }: {
-  descriptionUpdateHandler: (description: DescriptionField[]) => void;
+  descriptions: DescriptionField[];
   formDescriptionError: string;
+  setDescriptions: (descriptions: DescriptionField[]) => void;
+  addDescription: () => void;
+  removeDescription: (index: number) => void;
 }) => {
-  const [descriptions, setDescriptions] = useState([
-    { key: "", value: "" },
-  ] as DescriptionField[]);
-
-  const addDescription = () => {
-    const newDescriptions = [...descriptions, { key: "", value: "" }];
-    setDescriptions(newDescriptions);
-  };
-  const removeDescription = (index: number) => {
-    if (descriptions.length === 1) return;
-    const newDescriptions = descriptions.filter((des, idx) => idx !== index);
-    setDescriptions(newDescriptions);
-  };
-
   const descriptionHandler = (des: DescriptionField, index: number) => {
     let newDescriptions = [...descriptions];
     newDescriptions[index] = des;
     setDescriptions(newDescriptions);
   };
-
-  useEffect(() => {
-    descriptionUpdateHandler(descriptions);
-  }, [descriptions, descriptionUpdateHandler]);
 
   return (
     <div className="table-responsive-md">

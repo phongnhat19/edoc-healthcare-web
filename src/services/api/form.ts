@@ -59,7 +59,19 @@ const getFormDetail = ({
         Authorization: `Bearer ${token}`,
       },
     })
-    .then((response) => response.data as Form);
+    .then((response) => {
+      return {
+        _id: response.data._id,
+        name: response.data.name,
+        symbol: response.data.symbol,
+        blockchainId: response.data.blockchainId,
+        dateCreated: new Date(response.data.createdAt),
+        organization: response.data.organization,
+        modelUI: response.data.modelUI,
+        inputFields: response.data.inputFields,
+        grantedFor: response.data.grantedFor,
+      } as Form;
+    });
 };
 
 const grantFormAccess = ({
@@ -120,28 +132,28 @@ const getFormRawTX = ({
   name,
   symbol,
   inputFields,
+  organization,
 }: {
   token: string;
   modelUI: string;
   name: string;
   symbol: string;
   inputFields: FormField[];
+  organization?: string;
 }) => {
+  const requestData: Record<string, any> = {
+    name,
+    symbol,
+    modelUI,
+    inputFields,
+  };
+  if (organization) requestData.organization = organization;
   return axios
-    .post(
-      `${API_ENDPOINT}/docmodels/get-raw-tx`,
-      {
-        name,
-        symbol,
-        modelUI,
-        inputFields,
+    .post(`${API_ENDPOINT}/docmodels/get-raw-tx`, requestData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    })
     .then((response) => {
       return {
         sessionKey: response.data.sessionKey,

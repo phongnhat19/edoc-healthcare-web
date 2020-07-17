@@ -12,6 +12,12 @@ interface User {
   role: string;
 }
 
+// Org type definition
+interface Organization {
+  _id: string;
+  name: string;
+}
+
 // Form type definition
 type FormFieldType = "string" | "singleChoice";
 
@@ -46,7 +52,6 @@ interface Form {
   name: string;
   symbol: string;
   blockchainId: string;
-  address: string;
   dateCreated: Date;
   organization: Organization;
   modelUI: string;
@@ -54,16 +59,29 @@ interface Form {
   grantedFor: string[];
 }
 
-// Doc type definition
-interface Doc {
+interface DocOwner {
   _id: string;
   name: string;
+}
+
+// Doc type definition
+
+interface Doc {
+  _id: string;
+  blockchainId: string;
+  name: string;
+  description?: string;
   issuedPlace: string;
   type: string;
-  ownerID: string;
-  ownerName: string;
+  uri: string;
+  owner: DocOwner;
+  issuer: DocOwner;
+  docModel: Form;
+  inputData?: FormValue[];
+  issuedTime?: Date;
   dateCreated: Date;
   status: ActivityStatus;
+  activities: any[] | [];
 }
 
 // Activity type definition
@@ -82,7 +100,7 @@ interface DescriptionField {
   key: string;
   value: string;
 }
-interface NewActivityForm {
+interface Activity {
   docId: string;
   name: string;
   recordingTime: string;

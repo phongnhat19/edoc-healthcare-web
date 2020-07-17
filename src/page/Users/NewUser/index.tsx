@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-
+import React, { useState, useContext } from "react";
 import {
   Card,
   CardBody,
@@ -9,44 +8,176 @@ import {
   Input,
   Row,
   Col,
+  FormFeedback,
 } from "reactstrap";
+import {
+  uniqueNamesGenerator,
+  colors,
+  countries,
+  adjectives,
+  animals,
+  Config,
+} from "unique-names-generator";
+import { load } from "recaptcha-v3";
+
+import { generateEOA, symEncrypt } from "../../../utils/blockchain";
+import { signUpForStaff, signUp } from "../../../services/api/user";
+import { UserContext } from "../../../App";
+import { RECAPTCHA_SITE_KEY } from "../../../services/api/constant";
+import { getErrorMessage } from "../../../services/api/error/index";
+
+const ROLES = ["admin", "organization", "staff", "personal user"];
+const STAFF_ROLE = "staff";
+const ADMIN_ROLE = "admin";
+const ORG_ROLE = "organization";
+
+const createYearRange = () => {
+  const START = 1945;
+  const END = 2020;
+  let yearRange: any[] = [];
+  for (let i = START; i < END; i++) {
+    yearRange.push(
+      <option value={i} key={i}>
+        {i}
+      </option>
+    );
+  }
+  return yearRange;
+};
 
 const NewUserPage = () => {
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState(ADMIN_ROLE);
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailExist, setEmailExist] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
-  const [gender, setGender] = useState("");
-  const [yearOfBirth, setYearOfBirth] = useState("");
+  const [gender, setGender] = useState("0");
+  const [yearOfBirth, setYearOfBirth] = useState("1945");
+  const [formError, setFormError] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
-  const ROLES = [
-    { id: "0", name: "admin" },
-    { id: "1", name: "organization" },
-    { id: "2", name: "staff" },
-    { id: "3", name: "personal user" },
-  ];
+  const { token } = useContext(UserContext);
 
-  const createYearRange = () => {
-    const START = 1945;
-    const END = 2020;
-    let yearRange: any[] = [];
-    for (let i = START; i < END; i++) {
-      yearRange.push(
-        <option value={i} key={i}>
-          {i}
-        </option>
-      );
-    }
-    return yearRange;
+  const setError = () => {
+    setFormError("Không được để trống");
+    return false;
   };
+
+  const checkValidation = (): boolean => {
+    let isValid = true;
+    if (name === "") isValid = setError();
+    if (userName === "" && role === STAFF_ROLE) isValid = setError();
+    if (email === "") isValid = setError();
+    if (password === "") isValid = setError();
+    if (address === "") isValid = setError();
+
+    return isValid;
+  };
+
+  /** Generate info from blockchain util */
+  const generateInfo = (): {
+    bcAddress: string;
+    privateEncrypted: string;
+    clientPassphrase: string;
+  } => {
+    const userEOA = generateEOA();
+    const bcAddress = userEOA.address;
+    const { privateKey } = userEOA;
+    const clientPassphrase = "my_password_hash"; // Currently client passphrase will be 'my_password_hash' for every user
+    const privateEncrypted = symEncrypt(privateKey, clientPassphrase);
+    return { bcAddress, privateEncrypted, clientPassphrase };
+  };
+
+  const submitForStaffUser = () => {
+    const { bcAddress, privateEncrypted, clientPassphrase } = generateInfo();
+    signUpForStaff({
+      username: userName,
+      name,
+      password: clientPassphrase,
+      bcAddress,
+      privateEncrypted,
+      token,
+    })
+      .then(() => {
+        window.location.href = "/users/list";
+      })
+      .catch(({ response }) => {
+        setIsCreating(false);
+        setEmailExist(getErrorMessage(response.data.error.message, "vi"));
+      });
+  };
+
+  /** Generate a string of 12 random words */
+  const wordGenerator = (): string => {
+    const config: Config = {
+      dictionaries: [adjectives, colors, animals, countries],
+      length: 4,
+      separator: " ",
+      style: "lowerCase",
+    };
+    return (
+      uniqueNamesGenerator(config) +
+      " " +
+      uniqueNamesGenerator(config) +
+      " " +
+      uniqueNamesGenerator(config)
+    );
+  };
+
+  const submitForAdminOrOrg = async () => {
+    const { bcAddress, privateEncrypted, clientPassphrase } = generateInfo();
+    const recaptchaToken = await getRecaptchaKey();
+    const seedEncrypted = symEncrypt(wordGenerator(), clientPassphrase);
+
+    signUp({
+      name,
+      email,
+      password,
+      privateEncrypted,
+      bcAddress,
+      recaptchaToken,
+      seedEncrypted,
+    })
+      .then(() => {
+        window.location.href = "/users/list";
+      })
+      .catch(({ response }) => {
+        setIsCreating(false);
+        setEmailExist(getErrorMessage(response.data.error.message, "vi"));
+      });
+  };
+
+  const submitHandler = async () => {
+    setIsCreating(true);
+    const isValid = checkValidation();
+    if (!isValid) {
+      setIsCreating(false);
+      return;
+    }
+
+    setFormError("");
+    if (role === STAFF_ROLE) {
+      await submitForStaffUser();
+    } else if (role === ADMIN_ROLE || role === ORG_ROLE) {
+      await submitForAdminOrOrg();
+    }
+  };
+
+  const getRecaptchaKey = async () => {
+    const responseToken = await load(RECAPTCHA_SITE_KEY);
+    const token = await responseToken.execute("signup");
+    return token;
+  };
+
   return (
     <div className="app-inner-content-layout">
       <div className="app-inner-content-layout--main">
         <Card>
           <CardHeader>
             <div className="card-header--title">
-              <b className="d-block text-uppercase mt-1">Tạo Hồ sơ mới</b>
+              <b className="d-block text-uppercase mt-1">Tạo nhân viên mới</b>
             </div>
           </CardHeader>
           <div className="divider" />
@@ -64,8 +195,10 @@ const NewUserPage = () => {
                   type="text"
                   name="name"
                   value={name}
+                  invalid={formError !== "" && name === ""}
                   onChange={(e) => setName(e.target.value)}
                 />
+                <FormFeedback>{formError}</FormFeedback>
               </Col>
               <Col
                 xs="12"
@@ -81,16 +214,37 @@ const NewUserPage = () => {
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
-                  {ROLES.map((role: any) => {
+                  {ROLES.map((_role) => {
                     return (
-                      <option value={role.id} key={role.id}>
-                        {role.name}
+                      <option value={_role} key={_role}>
+                        {_role}
                       </option>
                     );
                   })}
                 </Input>
               </Col>
             </Row>
+            {role === STAFF_ROLE && (
+              <Row className="justify-content-center mt-4">
+                <Col
+                  xs="12"
+                  lg="2"
+                  className="d-flex justify-content-lg-end align-items-center"
+                >
+                  User name
+                </Col>
+                <Col xs="12" lg="10">
+                  <Input
+                    type="text"
+                    name="userName"
+                    value={userName}
+                    invalid={formError !== "" && userName === ""}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
+                  <FormFeedback>{formError}</FormFeedback>
+                </Col>
+              </Row>
+            )}
             <Row className="justify-content-center mt-4">
               <Col
                 xs="12"
@@ -104,8 +258,13 @@ const NewUserPage = () => {
                   type="email"
                   name="email"
                   value={email}
+                  invalid={
+                    (formError !== "" && email === "") || emailExist !== ""
+                  }
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                <FormFeedback>{formError}</FormFeedback>
+                <FormFeedback>{emailExist}</FormFeedback>
               </Col>
               <Col
                 xs="12"
@@ -119,8 +278,10 @@ const NewUserPage = () => {
                   type="password"
                   name="password"
                   value={password}
+                  invalid={formError !== "" && password === ""}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <FormFeedback>{formError}</FormFeedback>
               </Col>
             </Row>
             <Row className="justify-content-center mt-4">
@@ -141,7 +302,7 @@ const NewUserPage = () => {
                   <option key="0" value="0">
                     Nam
                   </option>
-                  <option key="0" value="0">
+                  <option key="1" value="1">
                     Nữ
                   </option>
                 </Input>
@@ -177,8 +338,10 @@ const NewUserPage = () => {
                   type="text"
                   name="address"
                   value={address}
+                  invalid={formError !== "" && address === ""}
                   onChange={(e) => setAddress(e.target.value)}
                 />
+                <FormFeedback>{formError}</FormFeedback>
               </Col>
             </Row>
             {/* <UncontrolledAlert className="mt-4" color="danger">
@@ -191,12 +354,27 @@ const NewUserPage = () => {
               size="sm"
               color="danger"
               className="py-2 px-4 mr-3"
+              disabled={isCreating}
               onClick={() => window.history.back()}
             >
               Hủy
             </Button>
-            <Button size="sm" className="py-2 px-4" color="primary">
-              Tạo
+            <Button
+              size="sm"
+              className="py-2 px-4"
+              color="primary"
+              disabled={isCreating}
+              onClick={submitHandler}
+            >
+              {isCreating ? (
+                <span
+                  className="btn-wrapper--icon spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              ) : (
+                "Tạo"
+              )}
             </Button>
           </CardFooter>
         </Card>
