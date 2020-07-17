@@ -83,7 +83,7 @@ type ActivityStatus = "ACTIVE";
 
 interface ImageField {
   title: string;
-  url: string;
+  data: string;
 }
 
 interface StatusField {
