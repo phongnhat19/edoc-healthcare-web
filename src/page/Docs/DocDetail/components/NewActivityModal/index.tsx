@@ -50,9 +50,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   const [statusBackground, setStatusBackground] = useState("#666666");
   const [notes, setNotes] = useState("");
   const [formNotesError, setFormNotesError] = useState("");
-  const [images, setImages] = useState(
-    [] as ImageField[]
-  );
+  const [images, setImages] = useState([] as ImageField[]);
   const [formImagesError, setFormImagesError] = useState("");
   const [formImageTitleError, setFormImageTitleError] = useState("");
 
