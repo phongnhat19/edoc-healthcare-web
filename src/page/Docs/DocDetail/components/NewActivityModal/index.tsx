@@ -50,11 +50,9 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
   const [statusBackground, setStatusBackground] = useState("#666666");
   const [notes, setNotes] = useState("");
   const [formNotesError, setFormNotesError] = useState("");
-  const [images, setImages] = useState(
-    [] as { file: File | string; title: string }[]
-  );
+  const [images, setImages] = useState([] as ImageField[]);
   const [formImagesError, setFormImagesError] = useState("");
-  const [formImageTitleError] = useState("");
+  const [formImageTitleError, setFormImageTitleError] = useState("");
 
   const [descriptions, setDescriptions] = useState([
     { key: "", value: "" },
@@ -79,13 +77,25 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     maxSize: 2000,
   });
 
-  const selectedFileHandler = (e: any) => {
-    let newImages = [];
-    for (let file of e.target.files) {
-      newImages.push({ file, title: "" });
+  const imageFileChangeHandler = async (e: any) => {
+    let newImages: ImageField[] = [...images];
+    const files = e.target.files;
+    if (files.length > 0) {
+      for (let file of e.target.files) {
+        const base64 = (await toBase64(file)) as string;
+        newImages.push({ data: base64, title: "" });
+      }
+      setImages(newImages);
     }
-    setFormImagesError("");
-    setImages([...images, ...newImages]);
+  };
+
+  const toBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   const imageTitleHandler = (event: any, index: number) => {
@@ -117,18 +127,18 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
       setFormStatusError("Trạng thái " + INVALID);
       isValid = false;
     }
-    // if (images.length === 0) {
-    //   setFormImagesError("Phải tải lên hình ảnh");
-    //   isValid = false;
-    // }
-    // if (images.length > 0) {
-    //   images.forEach((file) => {
-    //     if (file.title === "") {
-    //       setFormImageTitleError("Tiêu đề ảnh " + INVALID);
-    //       isValid = false;
-    //     }
-    //   });
-    // }
+    if (images.length === 0) {
+      setFormImagesError("Phải tải lên hình ảnh");
+      isValid = false;
+    }
+    if (images.length > 0) {
+      images.forEach((file) => {
+        if (file.title === "") {
+          setFormImageTitleError("Tiêu đề ảnh " + INVALID);
+          isValid = false;
+        }
+      });
+    }
     descriptions.forEach((des) => {
       if (des.key === "" || !des.value) {
         setFormDescriptionError(INVALID);
@@ -138,15 +148,10 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
     return isValid;
   };
 
-  // const filesUploadHandler = () => {
-  //   console.log(images[0].file);
-  //   console.log(URL.createObjectURL(images[0].file));
-  // };
-
   const submitHandler = async () => {
     const isValid = validate();
     if (!isValid) return;
-    // filesUploadHandler();
+
     const docDetail = await getDocById({ docId, token });
     const activityForm = {
       docId: docDetail.blockchainId,
@@ -158,8 +163,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         name: status,
         backgroundColor: statusBackground,
       },
-      // TODO: integrate upload API
-      images: [],
+      images,
       note: notes,
       description: descriptions,
     };
@@ -284,13 +288,13 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
         </Row>
         <Row className="mt-4">
           {images.length > 0 &&
-            images.map((image: any, idx) => (
+            images.map((image, idx) => (
               <Col key={`${idx}-images`} xs="6" lg="4" className="mt-4">
                 <div>
                   <img
                     className="img-box border rounded-sm"
-                    src={URL.createObjectURL(image.file)}
-                    alt={image.file.name}
+                    src={image.data}
+                    alt={`activity-${idx}`}
                   />
                 </div>
                 <div className="mt-2">
@@ -320,7 +324,7 @@ const NewActivityModal = ({ toggle }: { toggle: () => void }) => {
                 <input
                   multiple
                   {...getInputProps()}
-                  onChange={selectedFileHandler}
+                  onChange={imageFileChangeHandler}
                 />
                 <div className="dropzone-inner-wrapper p-4">
                   <small className="py-2 text-black-50">(png/jpeg)</small>
