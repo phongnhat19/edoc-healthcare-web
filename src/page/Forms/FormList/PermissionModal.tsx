@@ -27,6 +27,7 @@ const PermissionModal = ({
     [] as string[]
   );
   const [formBlockchainID, setFormBlockchainID] = useState("");
+  const [docModelId, setDocModelId] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
@@ -42,6 +43,7 @@ const PermissionModal = ({
   }, [token]);
 
   useEffect(() => {
+    console.log(formID)
     formID &&
       getFormDetail({ formID, token }).then((form) => {
         setInitUserWithPermission([...form.grantedFor]);
@@ -50,6 +52,9 @@ const PermissionModal = ({
         });
         setUserWithPermission(userObjList);
         setFormBlockchainID(form.blockchainId);
+        setDocModelId(form._id)
+        console.log('here')
+        console.log(form)
         setLoading(false);
       });
   }, [formID, token, userList]);
@@ -65,9 +70,9 @@ const PermissionModal = ({
       })
       .map((userObj) => userObj._id);
 
-    revokeFormAccess({ formBlockchainID, userIDs: userIDToRemove, token })
+    revokeFormAccess({ docModelId, userIDs: userIDToRemove, token })
       .then(() =>
-        grantFormAccess({ formBlockchainID, userIDs: userIDToAdd, token })
+        grantFormAccess({ docModelId, userIDs: userIDToAdd, token })
       )
       .then(() => {
         toast.success("Cấp quyền thành công");

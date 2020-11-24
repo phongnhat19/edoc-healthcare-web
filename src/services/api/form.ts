@@ -75,11 +75,11 @@ const getFormDetail = ({
 };
 
 const grantFormAccess = ({
-  formBlockchainID,
+  docModelId,
   userIDs,
   token,
 }: {
-  formBlockchainID: string;
+  docModelId: string;
   userIDs: string[];
   token: string;
 }) => {
@@ -88,7 +88,7 @@ const grantFormAccess = ({
     .post(
       `${API_ENDPOINT}/docmodels/grant`,
       {
-        docModelId: formBlockchainID,
+        docModelId: docModelId,
         users: userIDs,
       },
       {
@@ -101,11 +101,11 @@ const grantFormAccess = ({
 };
 
 const revokeFormAccess = ({
-  formBlockchainID,
+  docModelId,
   userIDs,
   token,
 }: {
-  formBlockchainID: string;
+  docModelId: string;
   userIDs: string[];
   token: string;
 }) => {
@@ -114,7 +114,7 @@ const revokeFormAccess = ({
     .post(
       `${API_ENDPOINT}/docmodels/revoke`,
       {
-        docModelId: formBlockchainID,
+        docModelId: docModelId,
         users: userIDs,
       },
       {

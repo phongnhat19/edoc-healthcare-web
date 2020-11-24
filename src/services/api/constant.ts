@@ -1,4 +1,5 @@
-const API_ENDPOINT = "https://api.credential.asia/api/v1";
+// const API_ENDPOINT = "https://api.credential.asia/api/v1";
+const API_ENDPOINT = 'http://128.199.191.179:8000/api/v1';
 
 const CLOUD_NAME = "agridential";
 const CLOUDINARY_API_KEY = "776754227374745";
