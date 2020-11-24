@@ -26,7 +26,6 @@ const PermissionModal = ({
   const [initUserWithPermission, setInitUserWithPermission] = useState(
     [] as string[]
   );
-  const [formBlockchainID, setFormBlockchainID] = useState("");
   const [docModelId, setDocModelId] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
@@ -51,7 +50,6 @@ const PermissionModal = ({
           return userList.filter((user) => user._id === userID)[0];
         });
         setUserWithPermission(userObjList);
-        setFormBlockchainID(form.blockchainId);
         setDocModelId(form._id)
         console.log('here')
         console.log(form)
