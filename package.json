@@ -31,7 +31,7 @@
     "immutability-helper": "^3.0.2",
     "leaflet": "^1.6.0",
     "match-sorter": "^4.1.0",
-    "moment": "^2.25.3",
+    "moment": "^2.29.2",
     "namor": "^2.0.2",
     "nouislider-react": "^3.3.7",
     "rc-pagination": "^2.2.1",
